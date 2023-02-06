@@ -40,11 +40,16 @@ public class BotService {
         playerAction.action = PlayerActions.Forward;
         playerAction.heading = new Random().nextInt(360);
 
-        // if(bot.getSize() >= 10){
-        //     playerAction.action = PlayerActions.START_AFTERBURNER;
-        // }
+        if(bot.getSize() >= 10){
+            // Kalau size lebih dari 10 nyalain after burner // coba coba doang
+            playerAction.action = PlayerActions.StartAfterBurner;
+        }
+        else {
+            playerAction.action = PlayerActions.Forward;
+            playerAction.heading = new Random().nextInt(360);
+        }
 
-        if (!gameState.getGameObjects().isEmpty()) { // return true kalau nemu gameobject
+        if (!gameState.getGameObjects().isEmpty()) { // gerak kearah makanan
             var foodList = gameState.getGameObjects()
                     .stream().filter(item -> item.getGameObjectType() == ObjectTypes.Food)
                     .sorted(Comparator
