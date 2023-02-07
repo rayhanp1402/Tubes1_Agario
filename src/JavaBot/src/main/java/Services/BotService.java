@@ -36,18 +36,17 @@ public class BotService {
     public void computeNextPlayerAction(PlayerAction playerAction) {
 
         //System.out.println("Compute Start \n");
+        double safeRadiusPlayer = 100;
+        double safeRadiusGasCloud = 100;
 
         GameObject NearestPlayer = findNearestPlayer(bot.getPosition());
+
+        System.out.println("Nearest Player: " + NearestPlayer.getId());
 
         playerAction.action = PlayerActions.Forward;
         playerAction.heading = new Random().nextInt(360);
 
         
-        
-
-        
-
-
         this.playerAction = playerAction;
         //System.out.println("Compute Finish \n");
     }
@@ -85,19 +84,23 @@ public class BotService {
 
     private GameObject findNearestPlayer(Position botPosition){
     // cari player paling deket sama kita
-        List<GameObject> AllPlayer = gameState.getPlayerGameObjects();
-        double minDistance = getDistanceBetween(bot, AllPlayer.get(0));
-        double Distance;
-        GameObject NearestPlayer = AllPlayer.get(0);
-
-        for (GameObject Player : AllPlayer){
-            Distance = getDistanceBetween(bot, Player); 
-            if(Distance < minDistance){
-                minDistance = Distance;
-                NearestPlayer = Player;
-            }   
-        }
+        GameObject NearestPlayer = bot;
         
+        if(!gameState.getPlayerGameObjects().isEmpty()){
+            List<GameObject> AllPlayer = gameState.getPlayerGameObjects();
+            double minDistance = getDistanceBetween(bot, AllPlayer.get(0));
+            double Distance;
+            NearestPlayer = AllPlayer.get(0);
+
+            for (GameObject Player : AllPlayer){
+                Distance = getDistanceBetween(bot, Player); 
+                if(Distance < minDistance){
+                    minDistance = Distance;
+                    NearestPlayer = Player;
+                }   
+            }
+        }
+
         return NearestPlayer;
     }
 
