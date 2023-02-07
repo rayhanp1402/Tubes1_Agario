@@ -35,32 +35,21 @@ public class BotService {
 
     public void computeNextPlayerAction(PlayerAction playerAction) {
 
-        System.out.println("Compute Start \n");
+        //System.out.println("Compute Start \n");
+
+        GameObject NearestPlayer = findNearestPlayer(bot.getPosition());
 
         playerAction.action = PlayerActions.Forward;
         playerAction.heading = new Random().nextInt(360);
 
-        if(bot.getSize() >= 10){
-            // Kalau size lebih dari 10 nyalain after burner // coba coba doang
-            playerAction.action = PlayerActions.StartAfterBurner;
-        }
-        else {
-            playerAction.action = PlayerActions.Forward;
-            playerAction.heading = new Random().nextInt(360);
-        }
+        
+        
 
-        if (!gameState.getGameObjects().isEmpty()) { // gerak kearah makanan
-            var foodList = gameState.getGameObjects()
-                    .stream().filter(item -> item.getGameObjectType() == ObjectTypes.Food)
-                    .sorted(Comparator
-                            .comparing(item -> getDistanceBetween(bot, item)))
-                    .collect(Collectors.toList());
+        
 
-            playerAction.heading = getHeadingBetween(foodList.get(0));
-        }
 
         this.playerAction = playerAction;
-        System.out.println("Compute Finish \n");
+        //System.out.println("Compute Finish \n");
     }
 
     public GameState getGameState() {
@@ -92,6 +81,24 @@ public class BotService {
 
     private int toDegrees(double v) {
         return (int) (v * (180 / Math.PI));
+    }
+
+    private GameObject findNearestPlayer(Position botPosition){
+    // cari player paling deket sama kita
+        List<GameObject> AllPlayer = gameState.getPlayerGameObjects();
+        double minDistance = getDistanceBetween(bot, AllPlayer.get(0));
+        double Distance;
+        GameObject NearestPlayer = AllPlayer.get(0);
+
+        for (GameObject Player : AllPlayer){
+            Distance = getDistanceBetween(bot, Player); 
+            if(Distance < minDistance){
+                minDistance = Distance;
+                NearestPlayer = Player;
+            }   
+        }
+        
+        return NearestPlayer;
     }
 
 
