@@ -35,13 +35,30 @@ public class BotService {
 
     public void computeNextPlayerAction(PlayerAction playerAction) {
 
-        //System.out.println("Compute Start \n");
+        /* -------    KAMUS    ------- 
+            Kamus Berisi variable lokal yang berguna untuk decision making 
+            pergerakan bot.
+        */
+
         double safeRadiusPlayer = 100;
+        double attackRadius = 100;
         double safeRadiusGasCloud = 100;
-
         GameObject NearestPlayer = findNearestPlayer(bot.getPosition());
+        int state = setState(safeRadiusPlayer, NearestPlayer, attackRadius);
 
-        System.out.println("Nearest Player: " + NearestPlayer.getId());
+        switch(state){
+            case 1: // OFFENSIVE STATE
+            break;
+
+            case 2: // DEFENSIVE STATE
+            break;
+        
+            default: // GROW STATE
+        }
+
+        //generalState();
+
+        //System.out.println("Nearest Player: " + NearestPlayer.getId());
 
         playerAction.action = PlayerActions.Forward;
         playerAction.heading = new Random().nextInt(360);
@@ -83,26 +100,54 @@ public class BotService {
     }
 
     private GameObject findNearestPlayer(Position botPosition){
-    // cari player paling deket sama kita
+    // Menghasilkan GameObject yang adalah Player yang paling dekat dengan bot agario
+
         GameObject NearestPlayer = bot;
         
         if(!gameState.getPlayerGameObjects().isEmpty()){
+            //System.out.println("inside conditional");
             List<GameObject> AllPlayer = gameState.getPlayerGameObjects();
-            double minDistance = getDistanceBetween(bot, AllPlayer.get(0));
+            double minDistance = 999999999;
             double Distance;
             NearestPlayer = AllPlayer.get(0);
 
             for (GameObject Player : AllPlayer){
                 Distance = getDistanceBetween(bot, Player); 
-                if(Distance < minDistance){
+                if(Distance < minDistance && bot != Player){
                     minDistance = Distance;
                     NearestPlayer = Player;
-                }   
+                }
             }
         }
 
         return NearestPlayer;
     }
+
+
+    private int setState(double safeRadiusPlayer, GameObject NearestPlayer, double attackRadius){
+    /*  Menghasilkan state dari bot untuk memilih algoritma greedy yang dipakai.
+        0. Grow 
+        1. Offensive = Nearest Player terdekat lebih kecil ukurannya
+        2. Defensive = Nearest Player lebih besar dan ukurannya lebih besar
+    */
+        int state = 0;
+        double Distance = getDistanceBetween(bot, NearestPlayer);
+
+        if(bot.getSize() > NearestPlayer.getSize()){
+            if(Distance <= attackRadius){
+                state = 1;
+            }  
+        }
+        else {
+            if(Distance <= safeRadiusPlayer){
+                state = 2;
+            }
+        }
+
+        return state;
+    }
+
+    //private void generalState();
 
 
 }
