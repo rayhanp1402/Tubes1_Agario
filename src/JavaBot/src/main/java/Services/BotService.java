@@ -54,6 +54,55 @@ public class BotService {
             break;
         
             default: // GROW STATE
+            // belom dicek soalnya maven gw error
+            if (!gameState.getGameObjects().isEmpty()) {
+                var foodList = gameState.getGameObjects() 
+                        .stream().filter(item -> item.getGameObjectType() == ObjectTypes.Food)
+                        .sorted(Comparator
+                                .comparing(item -> getDistanceBetween(bot, item)))
+                        .collect(Collectors.toList());
+                
+                var superfoodList = gameState.getGameObjects() 
+                .stream().filter(item -> item.getGameObjectType() == ObjectTypes.SuperFood)
+                .sorted(Comparator
+                        .comparing(item -> getDistanceBetween(bot, item)))
+                .collect(Collectors.toList());
+
+                var supernovaList = gameState.getGameObjects() 
+                        .stream().filter(item -> item.getGameObjectType() == ObjectTypes.SupernovaBomb)
+                        .sorted(Comparator
+                                .comparing(item -> getDistanceBetween(bot, item)))
+                        .collect(Collectors.toList());
+
+                if(supernovaList.size() > 0){
+                    if(isGasCloudNear() == 0){
+                        playerAction.heading = getHeadingBetween(supernovaList.get(0));
+                    }
+                    else{
+                        playerAction.heading = playerAction.heading/2; //belom tau cara muter 180 derajat gmn
+                    }
+                    
+                }
+                else{
+                    if(superfoodList.size() > 0){
+                        if(isGasCloudNear() == 0){
+                            playerAction.heading = getHeadingBetween(superfoodList.get(0));
+                        }
+                        else{
+                            playerAction.heading = playerAction.heading/2; //belom tau cara muter 180 derajat gmn
+                        }   
+                    }
+                    else{
+                        if(isGasCloudNear() == 0){
+                            playerAction.heading = getHeadingBetween(foodList.get(0));
+                        }
+                        else{
+                            playerAction.heading = playerAction.heading/2; //belom tau cara muter 180 derajat gmn
+                        }
+                    }
+                }
+                
+            }
         }
 
         //generalState();
@@ -145,6 +194,16 @@ public class BotService {
         }
 
         return state;
+    }
+
+    private int isGasCloudNear(){
+        GameObject gas = findNearestPlayer(bot.getPosition());
+        if(gas.getGameObjectType() == ObjectTypes.GasCloud){
+            return 1;
+        }
+        else{
+            return 0;
+        }
     }
 
     //private void generalState();
