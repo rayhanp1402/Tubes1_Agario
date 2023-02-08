@@ -41,7 +41,7 @@ public class BotService {
         */
 
         double safeRadiusPlayer = 100;
-        double attackRadius = 100;
+        double attackRadius = 400;
         double safeRadiusGasCloud = 100;
         GameObject NearestPlayer = findNearestPlayer(bot.getPosition());
         int state = setState(safeRadiusPlayer, NearestPlayer, attackRadius);
@@ -51,9 +51,21 @@ public class BotService {
         playerAction.action = PlayerActions.Forward;
         playerAction.heading = new Random().nextInt(360);
 
-        state = 0;
+        //state = 0;
         switch(state){
             case 1: // OFFENSIVE STATE
+            
+            playerAction.heading = getHeadingBetween(NearestPlayer);
+
+            int distance = (int) getDistanceBetween(bot, NearestPlayer) - bot.getSize() - NearestPlayer.getSize();
+
+            if((bot.getSize() - distance / (bot.getSpeed())^2) > NearestPlayer.getSize()){ 
+                // AFTER BURNER
+                // akan menyala ketika size bot setelah memakai afterburner 
+                // dan sampai di bot lawan lebih besar dari bot lawan.
+                playerAction.action = PlayerActions.StartAfterBurner;
+            }
+
             break;
 
             case 2: // DEFENSIVE STATE
@@ -169,7 +181,7 @@ public class BotService {
             NearestPlayer = AllPlayer.get(0);
 
             for (GameObject Player : AllPlayer){
-                Distance = getDistanceBetween(bot, Player); 
+                Distance = getDistanceBetween(bot, Player) - bot.getSize() - Player.getSize(); // dikurangi size
                 if(Distance < minDistance && bot != Player){
                     minDistance = Distance;
                     NearestPlayer = Player;
@@ -193,7 +205,7 @@ public class BotService {
 
             for (GameObject Object : AllObject){
                 if(Object.getGameObjectType() == target){
-                    Distance = getDistanceBetween(bot, Object);
+                    Distance = getDistanceBetween(bot, Object) - bot.getSize();
                     if(Distance < minDistance){
                         minDistance = Distance;
                         NearestObject = Object;
@@ -216,14 +228,14 @@ public class BotService {
         int state = 0;
         double Distance = getDistanceBetween(bot, NearestPlayer);
 
-        if(bot.getSize() > NearestPlayer.getSize()){
+        if(bot.getSize() > NearestPlayer.getSize() && gameState.getWorld().getCurrentTick() > 100 && bot.getSize() > 100){
             if(Distance <= attackRadius){
                 state = 1;
             }  
         }
         else {
             if(Distance <= safeRadiusPlayer){
-                state = 2;
+                //state = 2;
             }
         }
 
