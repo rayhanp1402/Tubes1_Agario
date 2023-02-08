@@ -6,6 +6,8 @@ import Models.*;
 import java.util.*;
 import java.util.stream.*;
 
+import com.ctc.wstx.shaded.msv_core.scanner.dtd.MessageCatalog;
+
 public class BotService {
     private GameObject bot;
     private PlayerAction playerAction;
@@ -40,13 +42,12 @@ public class BotService {
             pergerakan bot.
         */
 
-        double safeRadiusPlayer = 100;
-        double attackRadius = 400;
-        double safeRadiusGasCloud = 100;
+        double safeRadiusPlayer = 200;
+        double attackRadius = 300;
+        double safeRadiusGasCloud = 20;
         GameObject NearestPlayer = findNearestPlayer(bot.getPosition());
         int state = setState(safeRadiusPlayer, NearestPlayer, attackRadius);
-
-        System.out.println("State: " + state);
+        String messageBot = "State : " + state;
 
         playerAction.action = PlayerActions.Forward;
         playerAction.heading = new Random().nextInt(360);
@@ -64,6 +65,7 @@ public class BotService {
                 // akan menyala ketika size bot setelah memakai afterburner 
                 // dan sampai di bot lawan lebih besar dari bot lawan.
                 playerAction.action = PlayerActions.StartAfterBurner;
+                messageBot += "Action : Start AfterBurner";
             }
             
             if(bot.getSize() < NearestPlayer.getSize()){
@@ -72,6 +74,7 @@ public class BotService {
                 // tujuannya untuk mereduksi ukuran bot lawan agar bisa dimakan.
 
                 playerAction.action = PlayerActions.FireTorpedoes;
+                messageBot += "Action : Fire Torpedoes";
             }
 
             break;
@@ -91,7 +94,7 @@ public class BotService {
             GameObject nearestsuperfood = findNearestObject(ObjectTypes.SuperFood);
             GameObject nearestsupernova = findNearestObject(ObjectTypes.SupernovaPickup);
             if(getDistanceBetween(bot, nearestsupernova) <= getDistanceBetween(bot, nearestsuperfood)){
-                if(isGasCloudNear()==0){
+                if(isGasCloudNear(safeRadiusGasCloud)==0){
                     setHeadingToNearest(ObjectTypes.SupernovaPickup);
                 }
                 else{
@@ -100,7 +103,7 @@ public class BotService {
             }
             else{
                 if(getDistanceBetween(bot, nearestsuperfood) < getDistanceBetween(bot, nearestfood)){
-                    if(isGasCloudNear()==0){
+                    if(isGasCloudNear(safeRadiusGasCloud)==0){
                         setHeadingToNearest(ObjectTypes.SuperFood);
                     }
                     else{
@@ -108,7 +111,7 @@ public class BotService {
                     }
                 }
                 else{
-                    if(isGasCloudNear()==0){
+                    if(isGasCloudNear(safeRadiusGasCloud)==0){
                         setHeadingToNearest(ObjectTypes.Food);
                     }
                     else{
@@ -121,7 +124,7 @@ public class BotService {
         //generalState();
 
         
-        
+        System.out.println(messageBot);
         this.playerAction = playerAction;
         //System.out.println("Compute Finish \n");
     }
@@ -194,7 +197,7 @@ public class BotService {
 
             for (GameObject Object : AllObject){
                 if(Object.getGameObjectType() == target){
-                    Distance = getDistanceBetween(bot, Object) - bot.getSize();
+                    Distance = getDistanceBetween(bot, Object) - bot.getSize() - Object.getSize();
                     if(Distance < minDistance){
                         minDistance = Distance;
                         NearestObject = Object;
@@ -222,7 +225,7 @@ public class BotService {
             tick = gameState.getWorld().getCurrentTick();
         }
 
-        if(bot.getSize() > NearestPlayer.getSize() && Distance < attackRadius || (tick > 100 && bot.getSize() > 100)){
+        if(bot.getSize() > NearestPlayer.getSize() && Distance < attackRadius ||  bot.getSize() > 70){
             
             state = 1;
             
@@ -237,9 +240,10 @@ public class BotService {
     }
 
     //cek kalo ada gas cloud di deket bot player kita
-    private int isGasCloudNear(){
-        GameObject gas = findNearestPlayer(bot.getPosition());
-        if(gas.getGameObjectType() == ObjectTypes.GasCloud){
+    private int isGasCloudNear(double safeRadiusGasCloud){
+        GameObject gas = findNearestObject(ObjectTypes.GasCloud);
+
+        if((getDistanceBetween(bot, gas) - bot.getSize() - gas.getSize()) <= safeRadiusGasCloud){
             return 1;
         }
         else{
