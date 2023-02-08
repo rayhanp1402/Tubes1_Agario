@@ -55,62 +55,62 @@ public class BotService {
         
             default: // GROW STATE
             // belom dicek soalnya maven gw error
-            if (!gameState.getGameObjects().isEmpty()) {
-                var foodList = gameState.getGameObjects() 
-                        .stream().filter(item -> item.getGameObjectType() == ObjectTypes.Food)
-                        .sorted(Comparator
-                                .comparing(item -> getDistanceBetween(bot, item)))
-                        .collect(Collectors.toList());
-                
-                var superfoodList = gameState.getGameObjects() 
-                .stream().filter(item -> item.getGameObjectType() == ObjectTypes.SuperFood)
-                .sorted(Comparator
-                        .comparing(item -> getDistanceBetween(bot, item)))
-                .collect(Collectors.toList());
-
-                var supernovaList = gameState.getGameObjects() 
-                        .stream().filter(item -> item.getGameObjectType() == ObjectTypes.SupernovaBomb)
-                        .sorted(Comparator
-                                .comparing(item -> getDistanceBetween(bot, item)))
-                        .collect(Collectors.toList());
-
-                if(supernovaList.size() > 0){
-                    if(isGasCloudNear() == 0){
-                        playerAction.heading = getHeadingBetween(supernovaList.get(0));
-                    }
-                    else{
-                        playerAction.heading = playerAction.heading/2; //belom tau cara muter 180 derajat gmn
-                    }
+                if (!gameState.getGameObjects().isEmpty()) {
+                    var foodList = gameState.getGameObjects() 
+                            .stream().filter(item -> item.getGameObjectType() == ObjectTypes.Food)
+                            .sorted(Comparator
+                                    .comparing(item -> getDistanceBetween(bot, item)))
+                            .collect(Collectors.toList());
                     
-                }
-                else{
-                    if(superfoodList.size() > 0){
+                    var superfoodList = gameState.getGameObjects() 
+                    .stream().filter(item -> item.getGameObjectType() == ObjectTypes.SuperFood)
+                    .sorted(Comparator
+                            .comparing(item -> getDistanceBetween(bot, item)))
+                    .collect(Collectors.toList());
+
+                    var supernovaList = gameState.getGameObjects() 
+                            .stream().filter(item -> item.getGameObjectType() == ObjectTypes.SupernovaBomb)
+                            .sorted(Comparator
+                                    .comparing(item -> getDistanceBetween(bot, item)))
+                            .collect(Collectors.toList());
+
+                    if(supernovaList.size() > 0){
                         if(isGasCloudNear() == 0){
-                            playerAction.heading = getHeadingBetween(superfoodList.get(0));
+                            playerAction.heading = getHeadingBetween(supernovaList.get(0));
                         }
                         else{
-                            playerAction.heading = playerAction.heading/2; //belom tau cara muter 180 derajat gmn
-                        }   
+                            playerAction.heading = rotate180(playerAction.heading);  
+                        }
+                        
                     }
                     else{
-                        if(isGasCloudNear() == 0){
-                            playerAction.heading = getHeadingBetween(foodList.get(0));
+                        if(superfoodList.size() > 0){
+                            if(isGasCloudNear() == 0){
+                                playerAction.heading = getHeadingBetween(superfoodList.get(0));
+                            }
+                            else{
+                                playerAction.heading = rotate180(playerAction.heading); 
+                            }   
                         }
                         else{
-                            playerAction.heading = playerAction.heading/2; //belom tau cara muter 180 derajat gmn
+                            if(isGasCloudNear() == 0){
+                                playerAction.heading = getHeadingBetween(foodList.get(0));
+                            }
+                            else{
+                                playerAction.heading = rotate180(playerAction.heading); 
+                            }
                         }
                     }
+                    playerAction.action = PlayerActions.Forward;
                 }
-                
-            }
         }
 
         //generalState();
 
         //System.out.println("Nearest Player: " + NearestPlayer.getId());
 
-        playerAction.action = PlayerActions.Forward;
-        playerAction.heading = new Random().nextInt(360);
+        //playerAction.action = PlayerActions.Forward;
+        //playerAction.heading = new Random().nextInt(360);
 
         
         this.playerAction = playerAction;
@@ -196,6 +196,7 @@ public class BotService {
         return state;
     }
 
+    //cek kalo ada gas cloud di deket bot player kita
     private int isGasCloudNear(){
         GameObject gas = findNearestPlayer(bot.getPosition());
         if(gas.getGameObjectType() == ObjectTypes.GasCloud){
@@ -204,6 +205,16 @@ public class BotService {
         else{
             return 0;
         }
+    }
+
+    //ubah heading sebesar 180 derajat
+    private int rotate180(int heading){
+        int newheading = heading - 180;
+        if(newheading < 0){
+            newheading += 360;
+        }
+        return newheading;
+
     }
 
     //private void generalState();
