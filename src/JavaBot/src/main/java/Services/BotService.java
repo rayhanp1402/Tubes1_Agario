@@ -87,54 +87,35 @@ public class BotService {
             // dan kayanya ada eror tapi gue gatau dimana -Naufal
 
             // belom dicek soalnya maven gw error
-                // if (!gameState.getGameObjects().isEmpty()) {
-                //     var foodList = gameState.getGameObjects() 
-                //             .stream().filter(item -> item.getGameObjectType() == ObjectTypes.Food)
-                //             .sorted(Comparator
-                //                     .comparing(item -> getDistanceBetween(bot, item)))
-                //             .collect(Collectors.toList());
-                    
-                //     var superfoodList = gameState.getGameObjects() 
-                //     .stream().filter(item -> item.getGameObjectType() == ObjectTypes.SuperFood)
-                //     .sorted(Comparator
-                //             .comparing(item -> getDistanceBetween(bot, item)))
-                //     .collect(Collectors.toList());
-
-                //     var supernovaList = gameState.getGameObjects() 
-                //             .stream().filter(item -> item.getGameObjectType() == ObjectTypes.SupernovaBomb)
-                //             .sorted(Comparator
-                //                     .comparing(item -> getDistanceBetween(bot, item)))
-                //             .collect(Collectors.toList());
-
-                //     if(supernovaList.size() > 0){
-                //         if(isGasCloudNear() == 0){
-                //             playerAction.heading = getHeadingBetween(supernovaList.get(0));
-                //         }
-                //         else{
-                //             playerAction.heading = rotate180(playerAction.heading);  
-                //         }
-                        
-                //     }
-                //     else{
-                //         if(superfoodList.size() > 0){
-                //             if(isGasCloudNear() == 0){
-                //                 playerAction.heading = getHeadingBetween(superfoodList.get(0));
-                //             }
-                //             else{
-                //                 playerAction.heading = rotate180(playerAction.heading); 
-                //             }   
-                //         }
-                //         else{
-                //             if(isGasCloudNear() == 0){
-                //                 playerAction.heading = getHeadingBetween(foodList.get(0));
-                //             }
-                //             else{
-                //                 playerAction.heading = rotate180(playerAction.heading); 
-                //             }
-                //         }
-                //     }
-                //     playerAction.action = PlayerActions.Forward;
-                // }
+            GameObject nearestfood = findNearestObject(ObjectTypes.Food);
+            GameObject nearestsuperfood = findNearestObject(ObjectTypes.SuperFood);
+            GameObject nearestsupernova = findNearestObject(ObjectTypes.SupernovaPickup);
+            if(getDistanceBetween(bot, nearestsupernova) <= getDistanceBetween(bot, nearestsuperfood)){
+                if(isGasCloudNear()==0){
+                    setHeadingToNearest(ObjectTypes.SupernovaPickup);
+                }
+                else{
+                    playerAction.heading = rotate180(playerAction.heading);
+                }
+            }
+            else{
+                if(getDistanceBetween(bot, nearestsuperfood) < getDistanceBetween(bot, nearestfood)){
+                    if(isGasCloudNear()==0){
+                        setHeadingToNearest(ObjectTypes.SuperFood);
+                    }
+                    else{
+                        playerAction.heading = rotate180(playerAction.heading);
+                    }
+                }
+                else{
+                    if(isGasCloudNear()==0){
+                        setHeadingToNearest(ObjectTypes.Food);
+                    }
+                    else{
+                        playerAction.heading = rotate180(playerAction.heading);
+                    }
+                }
+            }
         }
 
         //generalState();
