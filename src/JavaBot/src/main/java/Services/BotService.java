@@ -46,6 +46,12 @@ public class BotService {
         GameObject NearestPlayer = findNearestPlayer(bot.getPosition());
         int state = setState(safeRadiusPlayer, NearestPlayer, attackRadius);
 
+        System.out.println("State: " + state);
+
+        playerAction.action = PlayerActions.Forward;
+        playerAction.heading = new Random().nextInt(360);
+
+        state = 0;
         switch(state){
             case 1: // OFFENSIVE STATE
             break;
@@ -54,64 +60,63 @@ public class BotService {
             break;
         
             default: // GROW STATE
+
             // belom dicek soalnya maven gw error
-            if (!gameState.getGameObjects().isEmpty()) {
-                var foodList = gameState.getGameObjects() 
-                        .stream().filter(item -> item.getGameObjectType() == ObjectTypes.Food)
-                        .sorted(Comparator
-                                .comparing(item -> getDistanceBetween(bot, item)))
-                        .collect(Collectors.toList());
+            // if (!gameState.getGameObjects().isEmpty()) {
+            //     var foodList = gameState.getGameObjects() 
+            //             .stream().filter(item -> item.getGameObjectType() == ObjectTypes.Food)
+            //             .sorted(Comparator
+            //                     .comparing(item -> getDistanceBetween(bot, item)))
+            //             .collect(Collectors.toList());
                 
-                var superfoodList = gameState.getGameObjects() 
-                .stream().filter(item -> item.getGameObjectType() == ObjectTypes.SuperFood)
-                .sorted(Comparator
-                        .comparing(item -> getDistanceBetween(bot, item)))
-                .collect(Collectors.toList());
+            //     var superfoodList = gameState.getGameObjects() 
+            //     .stream().filter(item -> item.getGameObjectType() == ObjectTypes.SuperFood)
+            //     .sorted(Comparator
+            //             .comparing(item -> getDistanceBetween(bot, item)))
+            //     .collect(Collectors.toList());
 
-                var supernovaList = gameState.getGameObjects() 
-                        .stream().filter(item -> item.getGameObjectType() == ObjectTypes.SupernovaBomb)
-                        .sorted(Comparator
-                                .comparing(item -> getDistanceBetween(bot, item)))
-                        .collect(Collectors.toList());
+            //     var supernovaList = gameState.getGameObjects() 
+            //             .stream().filter(item -> item.getGameObjectType() == ObjectTypes.SupernovaBomb)
+            //             .sorted(Comparator
+            //                     .comparing(item -> getDistanceBetween(bot, item)))
+            //             .collect(Collectors.toList());
 
-                if(supernovaList.size() > 0){
-                    if(isGasCloudNear() == 0){
-                        playerAction.heading = getHeadingBetween(supernovaList.get(0));
-                    }
-                    else{
-                        playerAction.heading = playerAction.heading/2; //belom tau cara muter 180 derajat gmn
-                    }
+            //     if(supernovaList.size() > 0){
+            //         if(isGasCloudNear() == 0){
+            //             playerAction.heading = getHeadingBetween(supernovaList.get(0));
+            //         }
+            //         else{
+            //             playerAction.heading = playerAction.heading/2; //belom tau cara muter 180 derajat gmn
+            //         }
                     
-                }
-                else{
-                    if(superfoodList.size() > 0){
-                        if(isGasCloudNear() == 0){
-                            playerAction.heading = getHeadingBetween(superfoodList.get(0));
-                        }
-                        else{
-                            playerAction.heading = playerAction.heading/2; //belom tau cara muter 180 derajat gmn
-                        }   
-                    }
-                    else{
-                        if(isGasCloudNear() == 0){
-                            playerAction.heading = getHeadingBetween(foodList.get(0));
-                        }
-                        else{
-                            playerAction.heading = playerAction.heading/2; //belom tau cara muter 180 derajat gmn
-                        }
-                    }
-                }
+            //     }
+            //     else{
+            //         if(superfoodList.size() > 0){
+            //             if(isGasCloudNear() == 0){
+            //                 playerAction.heading = getHeadingBetween(superfoodList.get(0));
+            //             }
+            //             else{
+            //                 playerAction.heading = playerAction.heading/2; //belom tau cara muter 180 derajat gmn
+            //             }   
+            //         }
+            //         else{
+            //             if(isGasCloudNear() == 0){
+            //                 playerAction.heading = getHeadingBetween(foodList.get(0));
+            //             }
+            //             else{
+            //                 playerAction.heading = playerAction.heading/2; //belom tau cara muter 180 derajat gmn
+            //             }
+            //         }
+            //     }
                 
-            }
+            // }
+
+            setHeadingToNearest(ObjectTypes.Food);
         }
 
         //generalState();
 
-        //System.out.println("Nearest Player: " + NearestPlayer.getId());
-
-        playerAction.action = PlayerActions.Forward;
-        playerAction.heading = new Random().nextInt(360);
-
+        
         
         this.playerAction = playerAction;
         //System.out.println("Compute Finish \n");
@@ -172,6 +177,32 @@ public class BotService {
         return NearestPlayer;
     }
 
+    private GameObject findNearestObject(ObjectTypes target){
+    // Menghasilkan GameObject yang adalah Object yang paling dekat dengan bot agario
+        
+        GameObject NearestObject = bot;
+            
+        if(!gameState.getGameObjects().isEmpty()){
+            List<GameObject> AllObject = gameState.getGameObjects();
+            double minDistance = 999999999;
+            double Distance;
+            NearestObject = AllObject.get(0);
+
+            for (GameObject Object : AllObject){
+                if(Object.getGameObjectType() == target){
+                    Distance = getDistanceBetween(bot, Object);
+                    if(Distance < minDistance){
+                        minDistance = Distance;
+                        NearestObject = Object;
+                    }
+                }
+                
+            }
+        }
+
+        return NearestObject;
+    }
+
 
     private int setState(double safeRadiusPlayer, GameObject NearestPlayer, double attackRadius){
     /*  Menghasilkan state dari bot untuk memilih algoritma greedy yang dipakai.
@@ -207,6 +238,22 @@ public class BotService {
     }
 
     //private void generalState();
+
+    private void setHeadingToNearest(ObjectTypes target){
+    /*  Merubah heading bot kearah GameObject terdekat
+        sesuai tipe yang dimasukan dalam argumen.
+        2. Food
+        3. WormHole
+        7. SuperFood
+        8. SupernovaPickup
+     */
+
+        GameObject targetObject = findNearestObject(target);
+        int heading = getHeadingBetween(targetObject);
+
+        playerAction.heading = heading;
+        
+    }
 
 
 }
