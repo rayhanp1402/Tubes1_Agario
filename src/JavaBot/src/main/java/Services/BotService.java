@@ -65,6 +65,14 @@ public class BotService {
                 // dan sampai di bot lawan lebih besar dari bot lawan.
                 playerAction.action = PlayerActions.StartAfterBurner;
             }
+            
+            if(bot.getSize() < NearestPlayer.getSize()){
+                // FIRE TORPEDO
+                // bot menembakan torpedo ketika target lawan lebih besar dari bot
+                // tujuannya untuk mereduksi ukuran bot lawan agar bisa dimakan.
+
+                playerAction.action = PlayerActions.FireTorpedoes;
+            }
 
             break;
 
@@ -226,12 +234,17 @@ public class BotService {
         2. Defensive = Nearest Player lebih besar dan ukurannya lebih besar
     */
         int state = 0;
-        double Distance = getDistanceBetween(bot, NearestPlayer);
+        double Distance = getDistanceBetween(bot, NearestPlayer) - bot.getSize() - NearestPlayer.getSize();
+        int tick = 0;
+        
+        if(gameState.getWorld().getCurrentTick() != null){
+            tick = gameState.getWorld().getCurrentTick();
+        }
 
-        if(bot.getSize() > NearestPlayer.getSize() && gameState.getWorld().getCurrentTick() > 100 && bot.getSize() > 100){
-            if(Distance <= attackRadius){
-                state = 1;
-            }  
+        if(bot.getSize() > NearestPlayer.getSize() && Distance < attackRadius || (tick > 100 && bot.getSize() > 100)){
+            
+            state = 1;
+            
         }
         else {
             if(Distance <= safeRadiusPlayer){
