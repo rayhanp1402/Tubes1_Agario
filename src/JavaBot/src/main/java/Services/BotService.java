@@ -61,6 +61,9 @@ public class BotService {
         
             default: // GROW STATE
 
+            // gue komen dulu ya yg ini soalnya ga ngerti kodenya wkwkw
+            // dan kayanya ada eror tapi gue gatau dimana -Naufal
+
             // belom dicek soalnya maven gw error
             // if (!gameState.getGameObjects().isEmpty()) {
             //     var foodList = gameState.getGameObjects() 
