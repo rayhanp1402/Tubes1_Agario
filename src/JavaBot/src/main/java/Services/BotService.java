@@ -61,58 +61,60 @@ public class BotService {
         
             default: // GROW STATE
 
+            setHeadingToNearest(ObjectTypes.Food); // dia bakal langsung ngarah ke food terdekat
+
             // gue komen dulu ya yg ini soalnya ga ngerti kodenya wkwkw
             // dan kayanya ada eror tapi gue gatau dimana -Naufal
 
             // belom dicek soalnya maven gw error
-                if (!gameState.getGameObjects().isEmpty()) {
-                    var foodList = gameState.getGameObjects() 
-                            .stream().filter(item -> item.getGameObjectType() == ObjectTypes.Food)
-                            .sorted(Comparator
-                                    .comparing(item -> getDistanceBetween(bot, item)))
-                            .collect(Collectors.toList());
+                // if (!gameState.getGameObjects().isEmpty()) {
+                //     var foodList = gameState.getGameObjects() 
+                //             .stream().filter(item -> item.getGameObjectType() == ObjectTypes.Food)
+                //             .sorted(Comparator
+                //                     .comparing(item -> getDistanceBetween(bot, item)))
+                //             .collect(Collectors.toList());
                     
-                    var superfoodList = gameState.getGameObjects() 
-                    .stream().filter(item -> item.getGameObjectType() == ObjectTypes.SuperFood)
-                    .sorted(Comparator
-                            .comparing(item -> getDistanceBetween(bot, item)))
-                    .collect(Collectors.toList());
+                //     var superfoodList = gameState.getGameObjects() 
+                //     .stream().filter(item -> item.getGameObjectType() == ObjectTypes.SuperFood)
+                //     .sorted(Comparator
+                //             .comparing(item -> getDistanceBetween(bot, item)))
+                //     .collect(Collectors.toList());
 
-                    var supernovaList = gameState.getGameObjects() 
-                            .stream().filter(item -> item.getGameObjectType() == ObjectTypes.SupernovaBomb)
-                            .sorted(Comparator
-                                    .comparing(item -> getDistanceBetween(bot, item)))
-                            .collect(Collectors.toList());
+                //     var supernovaList = gameState.getGameObjects() 
+                //             .stream().filter(item -> item.getGameObjectType() == ObjectTypes.SupernovaBomb)
+                //             .sorted(Comparator
+                //                     .comparing(item -> getDistanceBetween(bot, item)))
+                //             .collect(Collectors.toList());
 
-                    if(supernovaList.size() > 0){
-                        if(isGasCloudNear() == 0){
-                            playerAction.heading = getHeadingBetween(supernovaList.get(0));
-                        }
-                        else{
-                            playerAction.heading = rotate180(playerAction.heading);  
-                        }
+                //     if(supernovaList.size() > 0){
+                //         if(isGasCloudNear() == 0){
+                //             playerAction.heading = getHeadingBetween(supernovaList.get(0));
+                //         }
+                //         else{
+                //             playerAction.heading = rotate180(playerAction.heading);  
+                //         }
                         
-                    }
-                    else{
-                        if(superfoodList.size() > 0){
-                            if(isGasCloudNear() == 0){
-                                playerAction.heading = getHeadingBetween(superfoodList.get(0));
-                            }
-                            else{
-                                playerAction.heading = rotate180(playerAction.heading); 
-                            }   
-                        }
-                        else{
-                            if(isGasCloudNear() == 0){
-                                playerAction.heading = getHeadingBetween(foodList.get(0));
-                            }
-                            else{
-                                playerAction.heading = rotate180(playerAction.heading); 
-                            }
-                        }
-                    }
-                    playerAction.action = PlayerActions.Forward;
-                }
+                //     }
+                //     else{
+                //         if(superfoodList.size() > 0){
+                //             if(isGasCloudNear() == 0){
+                //                 playerAction.heading = getHeadingBetween(superfoodList.get(0));
+                //             }
+                //             else{
+                //                 playerAction.heading = rotate180(playerAction.heading); 
+                //             }   
+                //         }
+                //         else{
+                //             if(isGasCloudNear() == 0){
+                //                 playerAction.heading = getHeadingBetween(foodList.get(0));
+                //             }
+                //             else{
+                //                 playerAction.heading = rotate180(playerAction.heading); 
+                //             }
+                //         }
+                //     }
+                //     playerAction.action = PlayerActions.Forward;
+                // }
         }
 
         //generalState();
