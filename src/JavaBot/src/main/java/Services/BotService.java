@@ -47,10 +47,24 @@ public class BotService {
         double safeRadiusGasCloud = 20;
         GameObject NearestPlayer = findNearestPlayer(bot.getPosition());
         int state = setState(safeRadiusPlayer, NearestPlayer, attackRadius);
-        String messageBot = "State : " + state;
+        String messageBot = "State :" + state;
+        int effectActive = bot.getEffect();
+        int tick = 0;
 
+        if(gameState.getWorld().getCurrentTick() != null){
+            tick = gameState.getWorld().getCurrentTick();
+        }
+
+        messageBot += (" Tick :" + tick);
+
+        // DEFAULT ACTION
+        // aksi yang otomatis
         playerAction.action = PlayerActions.Forward;
-        playerAction.heading = new Random().nextInt(360);
+        //playerAction.heading = new Random().nextInt(360);
+        if(effectActive == 1 || effectActive == 3 || effectActive == 5){ 
+            playerAction.action = PlayerActions.StopAfterBurner;
+            messageBot += " Action :Stop AfterBurner";
+        }
 
         //state = 0;
         switch(state){
@@ -60,22 +74,44 @@ public class BotService {
 
             int distance = (int) getDistanceBetween(bot, NearestPlayer) - bot.getSize() - NearestPlayer.getSize();
 
-            if((bot.getSize() - distance / (bot.getSpeed())^2) > NearestPlayer.getSize()){ 
-                // AFTER BURNER
-                // akan menyala ketika size bot setelah memakai afterburner 
-                // dan sampai di bot lawan lebih besar dari bot lawan.
-                playerAction.action = PlayerActions.StartAfterBurner;
-                messageBot += "Action : Start AfterBurner";
-            }
+            // if((bot.getSize() - distance / (bot.getSpeed())^2) > NearestPlayer.getSize()){ 
+            //     // AFTER BURNER
+            //     // akan menyala ketika size bot setelah memakai afterburner 
+            //     // dan sampai di bot lawan lebih besar dari bot lawan.
+            //     playerAction.action = PlayerActions.StartAfterBurner;
+            //     messageBot += " Action :Start AfterBurner";
+            // }
             
-            if(bot.getSize() < NearestPlayer.getSize()){
-                // FIRE TORPEDO
-                // bot menembakan torpedo ketika target lawan lebih besar dari bot
-                // tujuannya untuk mereduksi ukuran bot lawan agar bisa dimakan.
+                if(effectActive == 1 || effectActive == 3 || effectActive == 5){ 
+                    playerAction.action = PlayerActions.StopAfterBurner;
+                    messageBot += " Action :Stop AfterBurner";
+                }
 
-                playerAction.action = PlayerActions.FireTorpedoes;
-                messageBot += "Action : Fire Torpedoes";
-            }
+                if(NearestPlayer.getSize() < bot.getSize()-40 && bot.getTeleportCount() > 0){
+                    playerAction.action = PlayerActions.FireTeleport;
+                    messageBot += " Action :Fire Teleport";
+                }
+                else {
+                    playerAction.action = PlayerActions.FireTorpedoes;
+                    messageBot += " Action :Fire Torpedoes";
+                }
+            
+            
+            // KAYANYA INI BUAT DI DEFENSIVE AJA
+            // if(bot.getSize() < NearestPlayer.getSize()){
+            //     // FIRE TORPEDO
+            //     // bot menembakan torpedo ketika target lawan lebih besar dari bot
+            //     // tujuannya untuk mereduksi ukuran bot lawan agar bisa dimakan.
+
+            //     playerAction.action = PlayerActions.FireTorpedoes;
+            //     messageBot += " Action :Fire Torpedoes";
+            // }
+
+            // if(!((bot.getSize() - distance / (bot.getSpeed())^2) > NearestPlayer.getSize())){
+            //     if(){
+                    
+            //     }
+            // }
 
             break;
 
@@ -84,12 +120,8 @@ public class BotService {
         
             default: // GROW STATE
 
-            setHeadingToNearest(ObjectTypes.Food); // dia bakal langsung ngarah ke food terdekat
+            //setHeadingToNearest(ObjectTypes.Food); // dia bakal langsung ngarah ke food terdekat
 
-            // gue komen dulu ya yg ini soalnya ga ngerti kodenya wkwkw
-            // dan kayanya ada eror tapi gue gatau dimana -Naufal
-
-            // belom dicek soalnya maven gw error
             GameObject nearestfood = findNearestObject(ObjectTypes.Food);
             GameObject nearestsuperfood = findNearestObject(ObjectTypes.SuperFood);
             GameObject nearestsupernova = findNearestObject(ObjectTypes.SupernovaPickup);
@@ -121,7 +153,10 @@ public class BotService {
             }
         }
 
-        //generalState();
+        
+        // PRIMARY ACTION
+        // aksi yang paling krusial jika situasi saat ini memenuhi syaratnya
+        calculateTeleport(NearestPlayer);
 
         
         System.out.println(messageBot);
@@ -219,10 +254,9 @@ public class BotService {
     */
         int state = 0;
         double Distance = getDistanceBetween(bot, NearestPlayer) - bot.getSize() - NearestPlayer.getSize();
-        int tick = 0;
         
         if(gameState.getWorld().getCurrentTick() != null){
-            tick = gameState.getWorld().getCurrentTick();
+            int tick = gameState.getWorld().getCurrentTick();
         }
 
         if(bot.getSize() > NearestPlayer.getSize() && Distance < attackRadius ||  bot.getSize() > 70){
@@ -279,5 +313,48 @@ public class BotService {
         
     }
 
+    private void calculateTeleport(GameObject NearestPlayer){
 
+        GameObject Teleporter = bot;
+        Position botPos = bot.getPosition();
+        Position telPos;
+        int xDiff, yDiff;
+        boolean found = false;
+        double degree;
+
+        // Find Out Teleport
+        if(!gameState.getGameObjects().isEmpty()){
+            List<GameObject> AllObject = gameState.getGameObjects();
+
+            for(GameObject Object : AllObject){
+                if(Object.getGameObjectType() == ObjectTypes.Teleporter){
+                    telPos = Object.getPosition();
+                    yDiff = Math.abs(telPos.getY() - botPos.getY());
+                    xDiff = Math.abs(telPos.getX() - botPos.getX());
+                    degree = Math.toDegrees(Math.atan2(yDiff, xDiff));
+                    System.out.println("Degree Teleport: " + degree);
+                    System.out.println("Heading: " + Object.currentHeading);
+
+                    /* mencocokan heading teleproter dengan sudut dari garis lurus yang
+                     * dibuat oleh posisi teleporter dan bot untuk mengetahui apakah 
+                     * teleporter tersebut punya kita. Dengan variable eror.
+                     */
+                    if(Math.abs(degree - Object.currentHeading) < 90){
+                        Teleporter = Object;
+                        found = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // teleport when its time
+        if(found){
+            if(getDistanceBetween(NearestPlayer, Teleporter) - NearestPlayer.getSize() < bot.getSize()){
+                playerAction.action = PlayerActions.Teleport;
+                System.out.println("TELEPORT");
+
+            }
+        }
+    }
 }
