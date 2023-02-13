@@ -5,6 +5,7 @@ import Models.*;
 
 import java.util.*;
 import java.util.stream.*;
+import java.lang.Math;
 
 import com.azure.core.annotation.HeaderCollection;
 import com.ctc.wstx.shaded.msv_core.scanner.dtd.MessageCatalog;
@@ -135,7 +136,7 @@ public class BotService {
                     setHeadingToNearest(ObjectTypes.SupernovaPickup);
                 }
                 else{
-                    playerAction.heading = rotate180(playerAction.heading);
+                    rotateNearGas(playerAction.heading);
                 }
             }
             else{
@@ -144,15 +145,16 @@ public class BotService {
                         setHeadingToNearest(ObjectTypes.SuperFood);
                     }
                     else{
-                        playerAction.heading = rotate180(playerAction.heading);
+                        rotateNearGas(playerAction.heading);
                     }
                 }
                 else{
                     if(isGasCloudNear(safeRadiusGasCloud)==0){
+                        setANewHeadingIfOutOfBound(playerAction.heading);
                         setHeadingToNearest(ObjectTypes.Food);
                     }
                     else{
-                        playerAction.heading = rotate180(playerAction.heading);
+                        rotateNearGas(playerAction.heading);
                     }
                 }
             }
@@ -345,7 +347,6 @@ public class BotService {
     //cek kalo ada gas cloud di deket bot player kita
     private int isGasCloudNear(double safeRadiusGasCloud){
         GameObject gas = findNearestObject(ObjectTypes.GasCloud);
-
         if((getDistanceBetween(bot, gas) - bot.getSize() - gas.getSize()) <= safeRadiusGasCloud){
             return 1;
         }
@@ -354,14 +355,30 @@ public class BotService {
         }
     }
 
-    //ubah heading sebesar 180 derajat
-    private int rotate180(int heading){ // bug
-        int newheading = heading - 180;
-        if(newheading < 0){
-            newheading += 360;
+    //ubah heading jika ketemu dengan gascloud
+    private void rotateNearGas(int heading){ // bug
+        GameObject gas = findNearestObject(ObjectTypes.GasCloud);
+        int x = bot.getPosition().getX();
+        int y = bot.getPosition().getY();
+        int x2 = gas.getPosition().getX();
+        int y2 = gas.getPosition().getY();
+        double deltaX = x-x2;
+        double deltaY = y-y2;
+        double newheading = Math.atan2(deltaY, deltaX);
+        newheading += Math.PI;
+        playerAction.heading = (int) newheading;
+    }
+    
+    private void setANewHeadingIfOutOfBound(int heading){
+        // mengubah heading jika ketemu dengan bound/radius luar game
+        int newheading = heading;
+        double distance = Math.sqrt(Math.pow(bot.getPosition().getX(), 2) + Math.pow(bot.getPosition().getY(), 2));
+        if((int) distance > gameState.getWorld().getRadius()){
+            double sudut = Math.atan2(bot.getPosition().getX(),bot.getPosition().getY());
+            double nheading = sudut + Math.PI;
+            newheading = (int) nheading;
         }
-        return newheading;
-
+        playerAction.heading = newheading;
     }
 
 
