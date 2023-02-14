@@ -47,6 +47,8 @@ public class BotService {
         double safeRadiusPlayer = 200;
         double attackRadius = 300;
         double safeRadiusGasCloud = 20;
+        double safeRadiusSupernova = 200;
+        double safeEnemyTorpedoRadius = 50;
         GameObject NearestPlayer = findNearestPlayer(bot.getPosition());
         int state = setState(safeRadiusPlayer, NearestPlayer, attackRadius);
         String messageBot = "";
@@ -99,26 +101,43 @@ public class BotService {
                 fireTeleport();
                 messageBot += " Action :Fire Teleport";
             }
-            
-            // KAYANYA INI BUAT DI DEFENSIVE AJA
-            // if(bot.getSize() < NearestPlayer.getSize()){
-            //     // FIRE TORPEDO
-            //     // bot menembakan torpedo ketika target lawan lebih besar dari bot
-            //     // tujuannya untuk mereduksi ukuran bot lawan agar bisa dimakan.
-
-            //     playerAction.action = PlayerActions.FireTorpedoes;
-            //     messageBot += " Action :Fire Torpedoes";
-            // }
-
-            // if(!((bot.getSize() - distance / (bot.getSpeed())^2) > NearestPlayer.getSize())){
-            //     if(){
-                    
-            //     }
-            // }
-
             break;
 
             case 2: // DEFENSIVE STATE
+            GameObject nearestSupernovaBomb = findNearestObject(ObjectTypes.SupernovaBomb);
+
+            shieldActivation(safeEnemyTorpedoRadius);
+
+            if(bot.getSize() < NearestPlayer.getSize() && getDistanceBetween(bot, NearestPlayer) <= safeRadiusPlayer) {
+                if(bot.getSize() > NearestPlayer.getSize() - 5) {
+                    // bot menembakkan torpedo ketika target lawan lebih besar dari bot
+                    // tujuannya untuk mereduksi ukuran bot lawan agar bisa dimakan.
+                    playerAction.heading = getHeadingBetween(NearestPlayer);
+                    fireTorpedo();
+                    messageBot += " Action:Fight back";
+                }
+
+                playerAction.heading = NearestPlayer.currentHeading + 45;
+                // Menembakkan teleport untuk kabur jika syarat memenuhi
+                fireTeleport();
+
+                if(bot.getSize() > 5) {
+                    // Kabur menggunakan afterburner apabila syarat memenuhi
+                    playerAction.action = PlayerActions.StartAfterBurner;
+                    messageBot += " Action:AfterBurner Run from Player";
+                }
+            }
+
+            if(getDistanceBetween(bot, nearestSupernovaBomb) <= safeRadiusSupernova) {
+                playerAction.heading = nearestSupernovaBomb.currentHeading + 90;
+                // Menembakkan teleport untuk kabur jika syarat memenuhi
+                fireTeleport();
+                if(bot.getSize() > 5) {
+                    // Kabur menggunakan afterburner apabila syarat memenuhi
+                    playerAction.action = PlayerActions.StartAfterBurner;
+                    messageBot += " Action:AfterBurner Run from Supernova";
+                }
+            }
             break;
         
             default: // GROW STATE
@@ -548,5 +567,15 @@ public class BotService {
         }
 
 
+    }
+
+    private void shieldActivation(double safeEnemyTorpedoRadius) {
+        // Mengatkifkan shield apabila terdapat torpedo salvo dalam radius bahaya
+        // Syarat : Shield count > 0 dan size player > 20
+        GameObject nearestTorpedo = findNearestObject(ObjectTypes.TorpedoSalvo);
+        if(getDistanceBetween(bot, nearestTorpedo) <= safeEnemyTorpedoRadius && bot.getShieldCount() > 0 && bot.getSize() > 20) {
+            playerAction.action = PlayerActions.ActivateShield;
+            System.out.println("Shield Activated");
+        }
     }
 }
