@@ -153,6 +153,7 @@ public class BotService {
             if(getDistanceBetween(bot, nearestsupernova) <= getDistanceBetween(bot, nearestsuperfood)){
                 if(isGasCloudNear(safeRadiusGasCloud)==0){
                     setHeadingToNearest(ObjectTypes.SupernovaPickup);
+                    messageBot += " Action : Heading for picking a supernova";
                 }
                 else{
                     rotateNearGas(playerAction.heading);
@@ -162,6 +163,7 @@ public class BotService {
                 if(getDistanceBetween(bot, nearestsuperfood) < getDistanceBetween(bot, nearestfood)){
                     if(isGasCloudNear(safeRadiusGasCloud)==0){
                         setHeadingToNearest(ObjectTypes.SuperFood);
+                        messageBot += " Action : Heading for picking a superfood";
                     }
                     else{
                         rotateNearGas(playerAction.heading);
@@ -170,6 +172,7 @@ public class BotService {
                 else{
                     if(isGasCloudNear(safeRadiusGasCloud)==0){
                         setHeadingToNearest(ObjectTypes.Food);
+                        messageBot += " Action : Heading for picking a regular food";
                     }
                     else{
                         rotateNearGas(playerAction.heading);
