@@ -169,7 +169,6 @@ public class BotService {
                 }
                 else{
                     if(isGasCloudNear(safeRadiusGasCloud)==0){
-                        setANewHeadingIfOutOfBound(playerAction.heading);
                         setHeadingToNearest(ObjectTypes.Food);
                     }
                     else{
@@ -182,6 +181,7 @@ public class BotService {
         
         // PRIMARY ACTION
         // aksi yang paling krusial jika situasi saat ini memenuhi syaratnya
+        setANewHeadingIfOutOfBound(playerAction.heading);
         calculateTeleportAlternative(NearestPlayer);
         stopAfterBurner();
         fireOrDetonateSupernova();
