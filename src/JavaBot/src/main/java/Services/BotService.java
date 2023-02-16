@@ -131,24 +131,33 @@ public class BotService {
                     messageBot += " Action: Fire Torpedo";
                 }
 
-                
-            }
+                    escapeFromPlayerHeading(playerAction.heading);
+                    // Menembakkan teleport untuk kabur jika syarat memenuhi
+                    fireTeleport();
 
-            if(getDistanceBetween(bot, nearestSupernovaBomb) <= safeRadiusSupernova) {
-                //playerAction.heading = nearestSupernovaBomb.currentHeading + 90;
+                    if(bot.getSize() > 5) {
+                        // Kabur menggunakan afterburner apabila syarat memenuhi
+                        playerAction.action = PlayerActions.StartAfterBurner;
+                        messageBot += " Action:AfterBurner Run from Player";
+                    }
 
-                // Menembakkan teleport untuk kabur jika syarat memenuhi
-                fireTeleport(); // ini gabisa pake yang normal calculatenya
-                if(bot.getSize() > 5) {
-                    // Kabur menggunakan afterburner apabila syarat memenuhi
-                    playerAction.action = PlayerActions.StartAfterBurner;
-                    messageBot += " Action: AfterBurner Run from Supernova";
+                    if(getDistanceBetween(bot, nearestSupernovaBomb) <= safeRadiusSupernova) {
+                        playerAction.heading = nearestSupernovaBomb.currentHeading + 90;
+                        // Menembakkan teleport untuk kabur jika syarat memenuhi
+                        fireTeleport();
+                    if(bot.getSize() > 5) {
+                        // Kabur menggunakan afterburner apabila syarat memenuhi
+                        playerAction.action = PlayerActions.StartAfterBurner;
+                        messageBot += " Action:AfterBurner Run from Supernova";
+                        }
+                    }
+                }
+                else {
+                    playerAction.heading = rotateNearGas(playerAction.heading);
                 }
             }
 
-            playerAction.heading = botHeading;
             escapeTeleport(safeRadiusPlayer);
-
             break;
         
             default: // GROW STATE
@@ -640,5 +649,18 @@ public class BotService {
                 }
             }
         }
+    }
+
+     private void escapeFromPlayerHeading(int heading) {
+        GameObject NearestPlayer = findNearestPlayer(bot.getPosition());
+        int x1 = NearestPlayer.getPosition().getX();
+        int y1 = NearestPlayer.getPosition().getY();
+        int x2 = bot.getPosition().getX();
+        int y2 = bot.getPosition().getY();
+
+        double escapeHeading = Math.atan2(x2 - x1, y2 - y1);
+        escapeHeading += Math.PI/4;
+
+        playerAction.heading = toDegrees(escapeHeading);
     }
 }
