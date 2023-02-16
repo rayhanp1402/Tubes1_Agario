@@ -104,11 +104,6 @@ public class BotService {
             break;
 
             case 2: // DEFENSIVE STATE
-            if(effectActive == 1 || effectActive == 3 || effectActive == 5){ 
-                playerAction.action = PlayerActions.StopAfterBurner;
-                messageBot += " Action :Stop AfterBurner";
-            }
-
             GameObject nearestSupernovaBomb = findNearestObject(ObjectTypes.SupernovaBomb);
 
             shieldActivation(safeEnemyTorpedoRadius);
