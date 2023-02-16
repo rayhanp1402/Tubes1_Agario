@@ -153,16 +153,14 @@ public class BotService {
                     }
                 }
                 else {
-                    playerAction.heading = rotateNearGas(playerAction.heading);
+                    rotateNearGas(playerAction.heading);
                 }
-            }
+            
 
             escapeTeleport(safeRadiusPlayer);
             break;
         
             default: // GROW STATE
-
-            
 
             GameObject nearestfood = findNearestObject(ObjectTypes.Food);
             GameObject nearestsuperfood = findNearestObject(ObjectTypes.SuperFood);
@@ -201,7 +199,10 @@ public class BotService {
                 playerAction.action = PlayerActions.StopAfterBurner;
                 messageBot += " Action :Stop AfterBurner";
             }
+
         }
+        
+    
 
         
         // PRIMARY ACTION
