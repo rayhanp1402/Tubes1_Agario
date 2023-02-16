@@ -118,7 +118,7 @@ public class BotService {
                         messageBot += " Action:Fight back";
                     }
 
-                    playerAction.heading = NearestPlayer.currentHeading + 45;
+                    escapeFromPlayerHeading(playerAction.heading);
                     // Menembakkan teleport untuk kabur jika syarat memenuhi
                     fireTeleport();
 
@@ -585,5 +585,18 @@ public class BotService {
             playerAction.action = PlayerActions.ActivateShield;
             System.out.println("Shield Activated");
         }
+    }
+
+     private void escapeFromPlayerHeading(int heading) {
+        GameObject NearestPlayer = findNearestPlayer(bot.getPosition());
+        int x1 = NearestPlayer.getPosition().getX();
+        int y1 = NearestPlayer.getPosition().getY();
+        int x2 = bot.getPosition().getX();
+        int y2 = bot.getPosition().getY();
+
+        double escapeHeading = Math.atan2(x2 - x1, y2 - y1);
+        escapeHeading += Math.PI/4;
+
+        playerAction.heading = toDegrees(escapeHeading);
     }
 }
