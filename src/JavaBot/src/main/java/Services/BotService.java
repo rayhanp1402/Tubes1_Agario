@@ -145,7 +145,7 @@ public class BotService {
                     }
                 }
                 else {
-                    playerAction.heading = rotate180(playerAction.heading);
+                    playerAction.heading = rotateNearGas(playerAction.heading);
                 }
             }
             break;
