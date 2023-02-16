@@ -104,38 +104,48 @@ public class BotService {
             break;
 
             case 2: // DEFENSIVE STATE
+            if(effectActive == 1 || effectActive == 3 || effectActive == 5){ 
+                playerAction.action = PlayerActions.StopAfterBurner;
+                messageBot += " Action :Stop AfterBurner";
+            }
+
             GameObject nearestSupernovaBomb = findNearestObject(ObjectTypes.SupernovaBomb);
 
             shieldActivation(safeEnemyTorpedoRadius);
 
             if(bot.getSize() < NearestPlayer.getSize() && getDistanceBetween(bot, NearestPlayer) <= safeRadiusPlayer) {
-                if(bot.getSize() > NearestPlayer.getSize() - 5) {
+                if(isGasCloudNear(safeRadiusGasCloud)==0) {
+                    if(bot.getSize() > NearestPlayer.getSize() - 5) {
                     // bot menembakkan torpedo ketika target lawan lebih besar dari bot
                     // tujuannya untuk mereduksi ukuran bot lawan agar bisa dimakan.
-                    playerAction.heading = getHeadingBetween(NearestPlayer);
-                    fireTorpedo();
-                    messageBot += " Action:Fight back";
+                        playerAction.heading = getHeadingBetween(NearestPlayer);
+                        fireTorpedo();
+                        messageBot += " Action:Fight back";
+                    }
+
+                    playerAction.heading = NearestPlayer.currentHeading + 45;
+                    // Menembakkan teleport untuk kabur jika syarat memenuhi
+                    fireTeleport();
+
+                    if(bot.getSize() > 5) {
+                        // Kabur menggunakan afterburner apabila syarat memenuhi
+                        playerAction.action = PlayerActions.StartAfterBurner;
+                        messageBot += " Action:AfterBurner Run from Player";
+                    }
+
+                    if(getDistanceBetween(bot, nearestSupernovaBomb) <= safeRadiusSupernova) {
+                        playerAction.heading = nearestSupernovaBomb.currentHeading + 90;
+                        // Menembakkan teleport untuk kabur jika syarat memenuhi
+                        fireTeleport();
+                    if(bot.getSize() > 5) {
+                        // Kabur menggunakan afterburner apabila syarat memenuhi
+                        playerAction.action = PlayerActions.StartAfterBurner;
+                        messageBot += " Action:AfterBurner Run from Supernova";
+                        }
+                    }
                 }
-
-                playerAction.heading = NearestPlayer.currentHeading + 45;
-                // Menembakkan teleport untuk kabur jika syarat memenuhi
-                fireTeleport();
-
-                if(bot.getSize() > 5) {
-                    // Kabur menggunakan afterburner apabila syarat memenuhi
-                    playerAction.action = PlayerActions.StartAfterBurner;
-                    messageBot += " Action:AfterBurner Run from Player";
-                }
-            }
-
-            if(getDistanceBetween(bot, nearestSupernovaBomb) <= safeRadiusSupernova) {
-                playerAction.heading = nearestSupernovaBomb.currentHeading + 90;
-                // Menembakkan teleport untuk kabur jika syarat memenuhi
-                fireTeleport();
-                if(bot.getSize() > 5) {
-                    // Kabur menggunakan afterburner apabila syarat memenuhi
-                    playerAction.action = PlayerActions.StartAfterBurner;
-                    messageBot += " Action:AfterBurner Run from Supernova";
+                else {
+                    playerAction.heading = rotate180(playerAction.heading);
                 }
             }
             break;
