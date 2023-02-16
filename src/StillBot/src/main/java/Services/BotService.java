@@ -36,6 +36,7 @@ public class BotService {
     public void computeNextPlayerAction(PlayerAction playerAction) {
 
         playerAction.action = PlayerActions.Stop;
+        
         this.playerAction = playerAction;
         
     }

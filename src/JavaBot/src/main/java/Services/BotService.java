@@ -44,12 +44,13 @@ public class BotService {
             pergerakan bot.
         */
 
-        double safeRadiusPlayer = 200;
+        
         double attackRadius = 300;
         double safeRadiusGasCloud = 20;
         double safeRadiusSupernova = 200;
-        double safeEnemyTorpedoRadius = 50;
+        double safeEnemyTorpedoRadius = 150;
         GameObject NearestPlayer = findNearestPlayer(bot.getPosition());
+        double safeRadiusPlayer =150;
         int state = setState(safeRadiusPlayer, NearestPlayer, attackRadius);
         String messageBot = "";
         int effectActive = bot.getEffect();
@@ -67,17 +68,15 @@ public class BotService {
         // DEFAULT ACTION
         // aksi yang otomatis
         playerAction.action = PlayerActions.Forward;
+        setHeadingToNearest(ObjectTypes.Food);
+
         //playerAction.heading = new Random().nextInt(360);
-        if(effectActive == 1 || effectActive == 3 || effectActive == 5){ 
-            playerAction.action = PlayerActions.StopAfterBurner;
-            messageBot += " Action :Stop AfterBurner";
-        }
+        // if(effectActive == 1 || effectActive == 3 || effectActive == 5){ 
+        //     playerAction.action = PlayerActions.StopAfterBurner;
+        //     messageBot += " Action :Stop AfterBurner";
+        // }
 
-        if(tick > 50){
-            state = 1;
-        }
-
-        messageBot += " State :" + state;
+        messageBot += " State :" + state + " Effect: " + effectActive + " Size : " + bot.getSize();
 
         switch(state){
             case 1: // OFFENSIVE STATE
@@ -105,52 +104,61 @@ public class BotService {
 
             case 2: // DEFENSIVE STATE
             GameObject nearestSupernovaBomb = findNearestObject(ObjectTypes.SupernovaBomb);
+            int botHeading = getHeadingBetween(nearestSupernovaBomb) - 180;
+            //playerAction.heading = NearestPlayer.currentHeading;
 
             shieldActivation(safeEnemyTorpedoRadius);
 
             if(bot.getSize() < NearestPlayer.getSize() && getDistanceBetween(bot, NearestPlayer) <= safeRadiusPlayer) {
-                if(bot.getSize() > NearestPlayer.getSize() - 5) {
+                
+
+                //playerAction.heading = NearestPlayer.currentHeading + 45;
+
+                if(bot.getSize() > 5) {
+                    // Kabur menggunakan afterburner apabila syarat memenuhi
+                    playerAction.action = PlayerActions.StartAfterBurner;
+                    messageBot += " Action: AfterBurner Run from Player";
+                }
+
+                // Menembakkan teleport untuk kabur jika syarat memenuhi
+                fireTeleport(); // ini gabisa pake yang normal calculatenya
+
+                if(bot.getSize() < NearestPlayer.getSize()) {
                     // bot menembakkan torpedo ketika target lawan lebih besar dari bot
                     // tujuannya untuk mereduksi ukuran bot lawan agar bisa dimakan.
                     playerAction.heading = getHeadingBetween(NearestPlayer);
                     fireTorpedo();
-                    messageBot += " Action:Fight back";
+                    messageBot += " Action: Fire Torpedo";
                 }
 
-                playerAction.heading = NearestPlayer.currentHeading + 45;
-                // Menembakkan teleport untuk kabur jika syarat memenuhi
-                fireTeleport();
-
-                if(bot.getSize() > 5) {
-                    // Kabur menggunakan afterburner apabila syarat memenuhi
-                    playerAction.action = PlayerActions.StartAfterBurner;
-                    messageBot += " Action:AfterBurner Run from Player";
-                }
+                
             }
 
             if(getDistanceBetween(bot, nearestSupernovaBomb) <= safeRadiusSupernova) {
-                playerAction.heading = nearestSupernovaBomb.currentHeading + 90;
+                //playerAction.heading = nearestSupernovaBomb.currentHeading + 90;
+
                 // Menembakkan teleport untuk kabur jika syarat memenuhi
-                fireTeleport();
+                fireTeleport(); // ini gabisa pake yang normal calculatenya
                 if(bot.getSize() > 5) {
                     // Kabur menggunakan afterburner apabila syarat memenuhi
                     playerAction.action = PlayerActions.StartAfterBurner;
-                    messageBot += " Action:AfterBurner Run from Supernova";
+                    messageBot += " Action: AfterBurner Run from Supernova";
                 }
             }
+
+            playerAction.heading = botHeading;
+            escapeTeleport(safeRadiusPlayer);
+
             break;
         
             default: // GROW STATE
 
-            if(effectActive == 1 || effectActive == 3 || effectActive == 5){ 
-                playerAction.action = PlayerActions.StopAfterBurner;
-                messageBot += " Action :Stop AfterBurner";
-            }
+            
 
             GameObject nearestfood = findNearestObject(ObjectTypes.Food);
             GameObject nearestsuperfood = findNearestObject(ObjectTypes.SuperFood);
             GameObject nearestsupernova = findNearestObject(ObjectTypes.SupernovaPickup);
-            if(getDistanceBetween(bot, nearestsupernova) <= getDistanceBetween(bot, nearestsuperfood)){
+            if(getDistanceBetween(bot, nearestsupernova) <= getDistanceBetween(bot, nearestsuperfood) && nearestsupernova.getGameObjectType() == ObjectTypes.SupernovaPickup){
                 if(isGasCloudNear(safeRadiusGasCloud)==0){
                     setHeadingToNearest(ObjectTypes.SupernovaPickup);
                     messageBot += " Action : Heading for picking a supernova";
@@ -179,6 +187,11 @@ public class BotService {
                     }
                 }
             }
+
+            if(effectActive == 1 || effectActive == 3 || effectActive == 5){ 
+                playerAction.action = PlayerActions.StopAfterBurner;
+                messageBot += " Action :Stop AfterBurner";
+            }
         }
 
         
@@ -186,7 +199,7 @@ public class BotService {
         // aksi yang paling krusial jika situasi saat ini memenuhi syaratnya
         setANewHeadingIfOutOfBound(playerAction.heading);
         calculateTeleportAlternative(NearestPlayer);
-        stopAfterBurner();
+        stopAfterBurner(NearestPlayer);
         fireOrDetonateSupernova();
 
         
@@ -241,7 +254,11 @@ public class BotService {
 
             for (GameObject Player : AllPlayer){
                 Distance = getDistanceBetween(bot, Player) - bot.getSize() - Player.getSize(); // dikurangi size
-                if(Distance < minDistance && bot != Player){
+                int objX = Player.getPosition().getX();
+                int objY = Player.getPosition().getY();
+                int objToCenter = (int) Math.sqrt(Math.pow(objX, 2) + Math.pow(objY, 2));
+                
+                if(Distance < minDistance && bot != Player && objToCenter < gameState.getWorld().getRadius()){
                     minDistance = Distance;
                     NearestPlayer = Player;
                 }
@@ -261,11 +278,16 @@ public class BotService {
             double minDistance = 999999999;
             double Distance;
             NearestObject = AllObject.get(0);
+            
 
             for (GameObject Object : AllObject){
                 if(Object.getGameObjectType() == target){
                     Distance = getDistanceBetween(bot, Object) - bot.getSize() - Object.getSize();
-                    if(Distance < minDistance){
+                    int objX = Object.getPosition().getX();
+                    int objY = Object.getPosition().getY();
+                    int objToCenter = (int) Math.sqrt(Math.pow(objX, 2) + Math.pow(objY, 2));
+
+                    if(Distance < minDistance && objToCenter < gameState.getWorld().getRadius()){
                         minDistance = Distance;
                         NearestObject = Object;
                     }
@@ -276,6 +298,7 @@ public class BotService {
 
         return NearestObject;
     }
+    
     private GameObject findNearestObjectBetween(GameObject source,ObjectTypes target){
         // Menghasilkan GameObject yang adalah Object yang paling dekat dengan gameobject course
         // berdasarkan tipe yang dimasukan
@@ -348,18 +371,21 @@ public class BotService {
         int state = 0;
         double Distance = getDistanceBetween(bot, NearestPlayer) - bot.getSize() - NearestPlayer.getSize();
         
-        if(gameState.getWorld().getCurrentTick() != null){
-            int tick = gameState.getWorld().getCurrentTick();
-        }
 
-        if(bot.getSize() > NearestPlayer.getSize() && Distance < attackRadius ||  bot.getSize() > 70){
+        if((bot.getSize() > NearestPlayer.getSize() && Distance < attackRadius) || bot.getSize() > 500){
             
             state = 1;
             
         }
         else {
             if(Distance <= safeRadiusPlayer){
-                //state = 2;
+                state = 2;
+            }
+        }
+
+        if(gameState.getWorld().getCurrentTick() != null){
+            if(gameState.getWorld().getCurrentTick() < 100){
+                state = 0;
             }
         }
 
@@ -395,10 +421,22 @@ public class BotService {
         // mengubah heading jika ketemu dengan bound/radius luar game
         int newheading = heading;
         double distance = Math.sqrt(Math.pow(bot.getPosition().getX(), 2) + Math.pow(bot.getPosition().getY(), 2));
-        if((int) distance > gameState.getWorld().getRadius()){
-            double sudut = Math.atan2(bot.getPosition().getX(),bot.getPosition().getY());
-            double nheading = sudut + Math.PI;
-            newheading = (int) nheading;
+        GameObject centerWorld = bot;
+        Position zero = bot.getPosition();
+
+        zero.setX(0); zero.setY(0);
+        centerWorld.setPosition(zero);
+        
+        if(gameState.getWorld().getRadius() != null){
+            if((int) distance + bot.getSize() + 10> gameState.getWorld().getRadius()){
+                // double sudut = Math.atan2(bot.getPosition().getX(),bot.getPosition().getY());
+                // double nheading = sudut + Math.PI;
+                // newheading = (int) nheading;
+                newheading = getHeadingBetween(centerWorld);
+
+                System.out.println("PRIMARY: On The Edge, Change Heading to: ");
+                System.out.println(newheading);
+            }
         }
         playerAction.heading = newheading;
     }
@@ -433,7 +471,7 @@ public class BotService {
                     Teleporter = Object;
                     if(getDistanceBetween(Teleporter, NearestPlayer) < bot.getSize() && bot.getSize() > NearestPlayer.getSize()){
                         playerAction.action = PlayerActions.Teleport;
-                        System.out.println(" TELEPORT ");
+                        System.out.println("PRIMARY: Teleport ");
                     }
                 }
             }
@@ -507,11 +545,12 @@ public class BotService {
         }
     }
 
-    private void stopAfterBurner(){
+    private void stopAfterBurner(GameObject nearestPlayer){
     // langsung matikan afterburner jika ukuran kapal kritis
 
-        if((bot.getEffect() == 1 || bot.getEffect() == 3 || bot.getEffect() == 5) && bot.getSize() <= 50 ){
+        if((bot.getEffect() == 1 || bot.getEffect() == 3 || bot.getEffect() == 5) && bot.getSize() <= nearestPlayer.getSize()){
             playerAction.action = PlayerActions.StopAfterBurner;
+            System.out.println("PRIMARY: Stop Afterburner");
         }
     }
 
@@ -546,7 +585,8 @@ public class BotService {
             return furthestPlayer;
         }
 
-    private void fireOrDetonateSupernova(){
+    
+        private void fireOrDetonateSupernova(){
 
         boolean foundSupernova = false;
         
@@ -561,12 +601,14 @@ public class BotService {
 
         if(foundSupernova){
             playerAction.action = PlayerActions.DetonateSupernova;
+            System.out.println("PRIMARY: Detonate Supernova");
         }
         else if(bot.getSupernovaAvailable() != 0){
             GameObject furthestPlayer = findFurthestPlayer();
 
             playerAction.heading = getHeadingBetween(furthestPlayer);
             playerAction.action = PlayerActions.FireSupernova;
+            System.out.println("PRIMARY: Fire Supernova");
         }
 
 
@@ -576,9 +618,27 @@ public class BotService {
         // Mengatkifkan shield apabila terdapat torpedo salvo dalam radius bahaya
         // Syarat : Shield count > 0 dan size player > 20
         GameObject nearestTorpedo = findNearestObject(ObjectTypes.TorpedoSalvo);
-        if(getDistanceBetween(bot, nearestTorpedo) <= safeEnemyTorpedoRadius && bot.getShieldCount() > 0 && bot.getSize() > 20) {
+        if(getDistanceBetween(bot, nearestTorpedo) - bot.getSize() <= safeEnemyTorpedoRadius && bot.getShieldCount() > 0 && bot.getSize() > 50) {
             playerAction.action = PlayerActions.ActivateShield;
             System.out.println("Shield Activated");
+        }
+    }
+
+    private void escapeTeleport(double safeRadiusPlayer){
+        GameObject Teleporter = bot;
+
+        if(!gameState.getGameObjects().isEmpty()){
+            List<GameObject> AllObject = gameState.getGameObjects();
+
+            for(GameObject Object : AllObject){
+                if(Object.getGameObjectType() == ObjectTypes.Teleporter){
+                    Teleporter = Object;
+                    if(getDistanceBetween(Teleporter, bot) - bot.getSize() >= safeRadiusPlayer){
+                        playerAction.action = PlayerActions.Teleport;
+                        System.out.println("ESCAPE: Teleport ");
+                    }
+                }
+            }
         }
     }
 }
