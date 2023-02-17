@@ -68,8 +68,8 @@ ini meliputi menembakkan dan meledakkan *supernova*, mengaktifkan *teleport* yan
 │       ├───maven-status
 │       │ 
 │       └───JavaBot.jar
-|
-|
+│
+│
 └───src
         └───JavaBot
             │   Dockerfile
@@ -81,30 +81,30 @@ ini meliputi menembakkan dan meledakkan *supernova*, mengaktifkan *teleport* yan
             └───src
                     └───main
                             ├───java
-                            |      ├───Enums
-                            |      ├───ObjectTypes.java
-                            |      |
-                            |      └───PlayerActions.java
-                            |
-                            |
+                            │       ├───Enums
+                            │       ├───ObjectTypes.java
+                            │       │
+                            │       └───PlayerActions.java
+                            │
+                            │
                             ├───Models
                             |       ├───GameObject.java
-                            |       |
-                            |       ├───GameState.java
-                            |       |
-                            |       ├───GameStateDto.java
-                            |       |
-                            |       ├───PlayerAction.java
-                            |       |
-                            |       ├───Position.java
-                            |       |
-                            |       └───World.java
-                            |
-                            |
+                            │       │
+                            │       ├───GameState.java
+                            │       │
+                            │       ├───GameStateDto.java
+                            │       │
+                            │       ├───PlayerAction.java
+                            │       │
+                            │       ├───Position.java
+                            │       │
+                            │       └───World.java
+                            │
+                            │
                             ├───Services
-                            |       └───BotService.java
-                            |
-                            |   
+                            │       └───BotService.java
+                            │
+                            │   
                             └───Main.java
 ```
 
