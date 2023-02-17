@@ -54,7 +54,8 @@ ini meliputi menembakkan dan meledakkan *supernova*, mengaktifkan *teleport* yan
 ```bash
 .
 │   README.md
-│
+│   Dockerfile
+|   pom.xml
 ├───doc
 │       
 │
@@ -67,45 +68,38 @@ ini meliputi menembakkan dan meledakkan *supernova*, mengaktifkan *teleport* yan
 │       │ 
 │       ├───maven-status
 │       │ 
-│       └───JavaBot.jar
+│       └───agario.jar
 │
 │
 └───src
-        └───JavaBot
-            │   Dockerfile
-            │   pom.xml
-            │
-            ├───.github
-            │       .gitkeep
-            │
-            └───src
-                    └───main
-                            ├───java
-                            │       ├───Enums
-                            │       ├───ObjectTypes.java
-                            │       │
-                            │       └───PlayerActions.java
-                            │
-                            │
-                            ├───Models
-                            │       ├───GameObject.java
-                            │       │
-                            │       ├───GameState.java
-                            │       │
-                            │       ├───GameStateDto.java
-                            │       │
-                            │       ├───PlayerAction.java
-                            │       │
-                            │       ├───Position.java
-                            │       │
-                            │       └───World.java
-                            │
-                            │
-                            ├───Services
-                            │       └───BotService.java
-                            │
-                            │   
-                            └───Main.java
+        └───main
+                ├───java
+                │       ├───Enums
+                │       │
+                │       ├───ObjectTypes.java
+                │       │
+                │       └───PlayerActions.java
+                │
+                │
+                ├───Models
+                │       ├───GameObject.java
+                │       │
+                │       ├───GameState.java
+                │       │
+                │       ├───GameStateDto.java
+                │       │
+                │       ├───PlayerAction.java
+                │       │
+                │       ├───Position.java
+                │       │
+                │       └───World.java
+                │
+                │
+                ├───Services
+                │       └───BotService.java
+                │
+                │   
+                └───Main.java
 ```
 
 ## Requirements
@@ -118,7 +112,7 @@ ini meliputi menembakkan dan meledakkan *supernova*, mengaktifkan *teleport* yan
 * Download file `starter-pack.zip` pada link [berikut](https://github.com/EntelectChallenge/2021-Galaxio/releases/tag/2021.3.2).
 * Unzip file `starter-pack.zip` pada mesin eksekusi.
 * Lakukan cloning repository ini sebagai folder ke dalam folder `starter-pack`.
-* Kemudian, jalankan perintah built `mvn clean package` pada folder JavaBot dengan terminal.
+* Kemudian, jalankan perintah built `mvn clean package` pada folder `Tubes1_agario` dengan terminal.
 * Bila terdapat file `.jar` baru pada folder `target`, maka program berhasil dikompilasi.
 
 ## Cara Menjalankan Program
@@ -132,7 +126,7 @@ Untuk Windows, Anda dapat menggunakan cara berikut
 * Jalankan perintah `cd .\logger-publish\`, kemudian `dotnet Logger.dll`.
 * Panggil sebanyak Bot yang diperbolehkan dalam permainan (dapat diubah dalam file `appsettings.json` pada folder `engine-publish` dan `folder-publish`).
 Sebagai contoh, jalankan perintah `cd .\reference-bot-publish\`, kemudian `dotnet ReferenceBot.dll` untuk Bot Referensi dan
-`java -jar .\Tubes1_Agario\src\JavaBot\target\JavaBot.jar` untuk Bot Agario (Bot yang kami implementasikan).
+`java -jar .\Tubes1_Agario\src\JavaBot.jar` untuk Bot Agario (Bot yang kami implementasikan). File `JavaBot.jar` dapat di-rename.
 
 ### Dengan Batch File
 ```bash
@@ -163,8 +157,12 @@ pause
 ```
 Bagian :: Bots dapat dimodifikasi dari menjalankan Reference Bot menjadi Bot Agario.
 
-## Link Demo
+## Visualiser
+Visualiser dapat dijalankan setelah log aktifitas dari sebuah permainan tersimpan. Log tersebut disimpan pada
+folder `logger-publish`. Silahkan unzip folder zip pada folder `visualiser` sesuai Operating System Anda.
 
+## Link Demo
+* [Tugas Besar 1_Strategi Algoritma_Agario](https://youtu.be/6z3QYSaY1G8)
 
 ## Authors
 * [Naufal Syifa Firdaus - 13521050](https://github.com/nomsf)
