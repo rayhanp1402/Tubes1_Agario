@@ -161,7 +161,7 @@ start "" dotnet ReferenceBot.dll
 cd ../
 pause
 ```
-Bagian :: Bots dapat dimodifikasi dari menjalankan Reference Bot Agario.
+Bagian :: Bots dapat dimodifikasi dari menjalankan Reference Bot menjadi Bot Agario.
 
 ## Link Demo
 
