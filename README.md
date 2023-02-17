@@ -55,9 +55,10 @@ ini meliputi menembakkan dan meledakkan *supernova*, mengaktifkan *teleport* yan
 .
 │   README.md
 │   Dockerfile
-|   pom.xml
+│   pom.xml
+│
 ├───doc
-│       
+│       agario.pdf
 │
 ├───target
 │       ├───classes
