@@ -8,9 +8,9 @@ Implementasi Algoritma Greedy dalam Permainan "Galaxio"
 * [Cara Kompilasi Program](#cara-kompilasi-program)
 * [Cara Menjalankan Program](#cara-menjalankan-program)
 * [Link Demo](#link-demo)
-* [Author](#author)
+* [Authors](#authors)
 
-## Algoritma Greedy Program
+## Algoritma Greedy 
 Permainan Galaxio merupakan sejenis permainan bergenre *Battle Royale*, dimana para pemain akan berkompetisi
 untuk dapat bertahan sampai akhir yang daerahnya telah ditentukan dan mengecil seiring berjalannya waktu.
 Kami menggunakan sebuah strategi *Greedy* yang dibagi dalam tiga buah *state*, yaitu *state Grow*, 
@@ -50,7 +50,7 @@ ini meliputi menembakkan dan meledakkan *supernova*, mengaktifkan *teleport* yan
 *World* dari permainan. Adapun aksi *default* dimana Bot mencari dan mengkonsumsi *food* terdekat.
 
 
-## Struktur File Program
+## Struktur File
 ```bash
 .
 │   README.md
@@ -80,35 +80,35 @@ ini meliputi menembakkan dan meledakkan *supernova*, mengaktifkan *teleport* yan
             │
             └───src
                     └───main
-                        └───java
-                               ├───Enums
-                        |      ├───ObjectTypes.java
-                        |      |
-                        |      └───PlayerActions.java
-                        |
-                        |
-                        ├───Models
-                        |       ├───GameObject.java
-                        |       |
-                        |       ├───GameState.java
-                        |       |
-                        |       ├───GameStateDto.java
-                        |       |
-                        |       ├───PlayerAction.java
-                        |       |
-                        |       ├───Position.java
-                        |       |
-                        |       └───World.java
-                        |
-                        |
-                        ├───Services
-                        |       └───BotService.java
-                        |
-                        |   
-                        └───Main.java
+                            ├───java
+                            |      ├───Enums
+                            |      ├───ObjectTypes.java
+                            |      |
+                            |      └───PlayerActions.java
+                            |
+                            |
+                            ├───Models
+                            |       ├───GameObject.java
+                            |       |
+                            |       ├───GameState.java
+                            |       |
+                            |       ├───GameStateDto.java
+                            |       |
+                            |       ├───PlayerAction.java
+                            |       |
+                            |       ├───Position.java
+                            |       |
+                            |       └───World.java
+                            |
+                            |
+                            ├───Services
+                            |       └───BotService.java
+                            |
+                            |   
+                            └───Main.java
 ```
 
-## Requirement Program
+## Requirements
 * Java Virtual Machine (JVM) versi 11 atau lebih baru.
 * NodeJS
 * .Net Core 3.1
@@ -123,10 +123,10 @@ ini meliputi menembakkan dan meledakkan *supernova*, mengaktifkan *teleport* yan
 
 ## Cara Menjalankan Program
 
-## Link Demo Program
+## Link Demo
 
 
-## Author Program
+## Authors
 * [Naufal Syifa Firdaus - 13521050](https://github.com/nomsf)
 * [Shidqi Indy Izhari - 13521097](https://github.com/shidqizh)
 * [Rayhan Hanif Maulana Pradana - 13521112](https://github.com/rayhanp1402)
