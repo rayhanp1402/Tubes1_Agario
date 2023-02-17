@@ -60,13 +60,13 @@ ini meliputi menembakkan dan meledakkan *supernova*, mengaktifkan *teleport* yan
 │
 ├───target
 │   ├───classes
-|   |
+│   │ 
 │   ├───libs
-|   |
+│   │ 
 │   ├───maven-archiver
-|   |
+│   │ 
 │   ├───maven-status
-|   |
+│   │ 
 │   └───JavaBot.jar
 |
 |
