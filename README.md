@@ -1,16 +1,16 @@
-# Tubes1_Stima
-Tugas Besar I IF2211 Strategi Algoritma Semester II Tahun 2022/2023 Pemanfaatan Algoritma Greedy dalam Aplikasi Permainan "Galaxio"
+# Tugas Besar 1 Strategi Algoritma IF 2211 Tahun 2022/2023
+Implementasi Algoritma Greedy dalam Permainan "Galaxio"
 
 ## Daftar Isi
-* [Strategi Greedy Program](#strategi-greedy-program)
-* [Struktur Program](#struktur-program)
-* [Requirement Program](#requirement-program)
+* [Algoritma Greedy](#strategi-greedy)
+* [Struktur File](#struktur-file)
+* [Requirements](#requirements)
 * [Cara Kompilasi Program](#cara-kompilasi-program)
 * [Cara Menjalankan Program](#cara-menjalankan-program)
-* [Link Demo Program](#link-demo-program)
-* [Author Program](#author-program)
+* [Link Demo](#link-demo)
+* [Authors](#authors)
 
-## Strategi Greedy Program
+## Algoritma Greedy 
 Permainan Galaxio merupakan sejenis permainan bergenre *Battle Royale*, dimana para pemain akan berkompetisi
 untuk dapat bertahan sampai akhir yang daerahnya telah ditentukan dan mengecil seiring berjalannya waktu.
 Kami menggunakan sebuah strategi *Greedy* yang dibagi dalam tiga buah *state*, yaitu *state Grow*, 
@@ -50,65 +50,59 @@ ini meliputi menembakkan dan meledakkan *supernova*, mengaktifkan *teleport* yan
 *World* dari permainan. Adapun aksi *default* dimana Bot mencari dan mengkonsumsi *food* terdekat.
 
 
-## Struktur Program
+## Struktur File
 ```bash
 .
 │   README.md
-│
+│   Dockerfile
+|   pom.xml
 ├───doc
 │       
 │
 ├───target
-│   ├───classes
-|   |
-│   ├───libs
-|   |
-│   ├───maven-archiver
-|   |
-│   ├───maven-status
-|   |
-│   └───JavaBot.jar
-|
-|
+│       ├───classes
+│       │ 
+│       ├───libs
+│       │ 
+│       ├───maven-archiver
+│       │ 
+│       ├───maven-status
+│       │ 
+│       └───agario.jar
+│
+│
 └───src
-    └───JavaBot
-        │   Dockerfile
-        │   pom.xml
-        │
-        ├───.github
-        │       .gitkeep
-        │
-        └───src
-            └───main
-                └───java
-                    ├───Enums
-                    |   ├───ObjectTypes.java
-                    |   |
-                    |   └───PlayerActions.java
-                    |
-                    |
-                    ├───Models
-                    |   ├───GameObject.java
-                    |   |
-                    |   ├───GameState.java
-                    |   |
-                    |   ├───GameStateDto.java
-                    |   |
-                    |   ├───PlayerAction.java
-                    |   |
-                    |   ├───Position.java
-                    |   |
-                    |   └───World.java
-                    |
-                    |
-                    ├───Services
-                    |   └───BotService.java
-                    |
-                    |   
-                    └───Main.java
+        └───main
+                ├───java
+                │       ├───Enums
+                │       │
+                │       ├───ObjectTypes.java
+                │       │
+                │       └───PlayerActions.java
+                │
+                │
+                ├───Models
+                │       ├───GameObject.java
+                │       │
+                │       ├───GameState.java
+                │       │
+                │       ├───GameStateDto.java
+                │       │
+                │       ├───PlayerAction.java
+                │       │
+                │       ├───Position.java
+                │       │
+                │       └───World.java
+                │
+                │
+                ├───Services
+                │       └───BotService.java
+                │
+                │   
+                └───Main.java
 ```
 
-## Requirement Program
+## Requirements
 * Java Virtual Machine (JVM) versi 11 atau lebih baru.
 * NodeJS
 * .Net Core 3.1
@@ -118,15 +112,59 @@ ini meliputi menembakkan dan meledakkan *supernova*, mengaktifkan *teleport* yan
 * Download file `starter-pack.zip` pada link [berikut](https://github.com/EntelectChallenge/2021-Galaxio/releases/tag/2021.3.2).
 * Unzip file `starter-pack.zip` pada mesin eksekusi.
 * Lakukan cloning repository ini sebagai folder ke dalam folder `starter-pack`.
-* Kemudian, jalankan perintah built `mvn clean package` pada folder JavaBot dengan terminal.
+* Kemudian, jalankan perintah built `mvn clean package` pada folder `Tubes1_agario` dengan terminal.
 * Bila terdapat file `.jar` baru pada folder `target`, maka program berhasil dikompilasi.
 
 ## Cara Menjalankan Program
+Untuk Windows, Anda dapat menggunakan cara berikut
+### Pada Terminal secara Manual
+* Masuk ke dalam folder `starter-pack`.
+* Jalankan perintah `cd .\runner-publish\`, kemudian `dotnet GameRunner.dll`.
+* Buat terminal baru dalam folder `starter-pack`.
+* Jalankan perintah `cd .\engine-publish\`, kemudian `dotnet Engine.dll`.
+* Buat terminal baru dalam folder `starter-pack`.
+* Jalankan perintah `cd .\logger-publish\`, kemudian `dotnet Logger.dll`.
+* Panggil sebanyak Bot yang diperbolehkan dalam permainan (dapat diubah dalam file `appsettings.json` pada folder `engine-publish` dan `folder-publish`).
+Sebagai contoh, jalankan perintah `cd .\reference-bot-publish\`, kemudian `dotnet ReferenceBot.dll` untuk Bot Referensi dan
+`java -jar .\Tubes1_Agario\src\JavaBot.jar` untuk Bot Agario (Bot yang kami implementasikan). File `JavaBot.jar` dapat di-rename.
 
-## Link Demo Program
+### Dengan Batch File
+```bash
+@echo off
+:: Game Runner
+cd ./runner-publish/
+start "" dotnet GameRunner.dll
+:: Game Engine
+cd ../engine-publish/
+timeout /t 1
+start "" dotnet Engine.dll
+:: Game Logger
+cd ../logger-publish/
+timeout /t 1
+start "" dotnet Logger.dll
+:: Bots
+cd ../reference-bot-publish/
+timeout /t 3
+start "" dotnet ReferenceBot.dll
+timeout /t 3
+start "" dotnet ReferenceBot.dll
+timeout /t 3
+start "" dotnet ReferenceBot.dll
+timeout /t 3
+start "" dotnet ReferenceBot.dll
+cd ../
+pause
+```
+Bagian :: Bots dapat dimodifikasi dari menjalankan Reference Bot menjadi Bot Agario.
 
+## Visualiser
+Visualiser dapat dijalankan setelah log aktifitas dari sebuah permainan tersimpan. Log tersebut disimpan pada
+folder `logger-publish`. Silahkan unzip folder zip pada folder `visualiser` sesuai Operating System Anda.
 
-## Author Program
+## Link Demo
+* [Tugas Besar 1_Strategi Algoritma_Agario](https://youtu.be/6z3QYSaY1G8)
+
+## Authors
 * [Naufal Syifa Firdaus - 13521050](https://github.com/nomsf)
 * [Shidqi Indy Izhari - 13521097](https://github.com/shidqizh)
 * [Rayhan Hanif Maulana Pradana - 13521112](https://github.com/rayhanp1402)
