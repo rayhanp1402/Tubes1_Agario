@@ -1,16 +1,16 @@
-# Tubes1_Stima
-Tugas Besar I IF2211 Strategi Algoritma Semester II Tahun 2022/2023 Pemanfaatan Algoritma Greedy dalam Aplikasi Permainan "Galaxio"
+# Tugas Besar 1 Strategi Algoritma IF 2211 Tahun 2022/2023
+Implementasi Algoritma Greedy dalam Permainan "Galaxio"
 
 ## Daftar Isi
-* [Strategi Greedy Program](#strategi-greedy-program)
-* [Struktur Program](#struktur-program)
-* [Requirement Program](#requirement-program)
+* [Algoritma Greedy](#strategi-greedy)
+* [Struktur File](#struktur-file)
+* [Requirements](#requirements)
 * [Cara Kompilasi Program](#cara-kompilasi-program)
 * [Cara Menjalankan Program](#cara-menjalankan-program)
-* [Link Demo Program](#link-demo-program)
-* [Author Program](#author-program)
+* [Link Demo](#link-demo)
+* [Author](#author)
 
-## Strategi Greedy Program
+## Algoritma Greedy Program
 Permainan Galaxio merupakan sejenis permainan bergenre *Battle Royale*, dimana para pemain akan berkompetisi
 untuk dapat bertahan sampai akhir yang daerahnya telah ditentukan dan mengecil seiring berjalannya waktu.
 Kami menggunakan sebuah strategi *Greedy* yang dibagi dalam tiga buah *state*, yaitu *state Grow*, 
@@ -50,7 +50,7 @@ ini meliputi menembakkan dan meledakkan *supernova*, mengaktifkan *teleport* yan
 *World* dari permainan. Adapun aksi *default* dimana Bot mencari dan mengkonsumsi *food* terdekat.
 
 
-## Struktur Program
+## Struktur File Program
 ```bash
 .
 │   README.md
