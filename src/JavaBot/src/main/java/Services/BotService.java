@@ -105,25 +105,11 @@ public class BotService {
             case 2: // DEFENSIVE STATE
             GameObject nearestSupernovaBomb = findNearestObject(ObjectTypes.SupernovaBomb);
             int botHeading = getHeadingBetween(nearestSupernovaBomb) - 180;
-            //playerAction.heading = NearestPlayer.currentHeading;
 
             shieldActivation(safeEnemyTorpedoRadius);
 
-            if(bot.getSize() < NearestPlayer.getSize() && getDistanceBetween(bot, NearestPlayer) <= safeRadiusPlayer) {
-                
-
-                //playerAction.heading = NearestPlayer.currentHeading + 45;
-
-                if(bot.getSize() > 5) {
-                    // Kabur menggunakan afterburner apabila syarat memenuhi
-                    playerAction.action = PlayerActions.StartAfterBurner;
-                    messageBot += " Action: AfterBurner Run from Player";
-                }
-
-                // Menembakkan teleport untuk kabur jika syarat memenuhi
-                fireTeleport(); // ini gabisa pake yang normal calculatenya
-
-                if(bot.getSize() < NearestPlayer.getSize()) {
+            if(bot.getSize() < NearestPlayer.getSize() && getDistanceBetween(bot, NearestPlayer) <= safeRadiusPlayer + NearestPlayer.getSize() + bot.getSize()) { 
+                if(getDistanceBetween(bot, NearestPlayer) >= NearestPlayer.getSize() + bot.getSize() + 50) {
                     // bot menembakkan torpedo ketika target lawan lebih besar dari bot
                     // tujuannya untuk mereduksi ukuran bot lawan agar bisa dimakan.
                     playerAction.heading = getHeadingBetween(NearestPlayer);
@@ -131,31 +117,31 @@ public class BotService {
                     messageBot += " Action: Fire Torpedo";
                 }
 
+                if(getDistanceBetween(bot, NearestPlayer) < NearestPlayer.getSize() + bot.getSize() + 50) {
+                    if(bot.getSize() > 5) {
+                        // Kabur menggunakan afterburner apabila syarat memenuhi
+                        playerAction.action = PlayerActions.StartAfterBurner;
+                        messageBot += " Action: AfterBurner Run from Player";
+                    }
                     escapeFromPlayerHeading(playerAction.heading);
                     // Menembakkan teleport untuk kabur jika syarat memenuhi
                     fireTeleport();
+                }
 
-                    if(bot.getSize() > 5) {
-                        // Kabur menggunakan afterburner apabila syarat memenuhi
-                        playerAction.action = PlayerActions.StartAfterBurner;
-                        messageBot += " Action:AfterBurner Run from Player";
-                    }
-
-                    if(getDistanceBetween(bot, nearestSupernovaBomb) <= safeRadiusSupernova) {
-                        playerAction.heading = nearestSupernovaBomb.currentHeading + 90;
-                        // Menembakkan teleport untuk kabur jika syarat memenuhi
-                        fireTeleport();
-                    if(bot.getSize() > 5) {
-                        // Kabur menggunakan afterburner apabila syarat memenuhi
-                        playerAction.action = PlayerActions.StartAfterBurner;
-                        messageBot += " Action:AfterBurner Run from Supernova";
-                        }
+                if(getDistanceBetween(bot, nearestSupernovaBomb) <= safeRadiusSupernova) {
+                    playerAction.heading = nearestSupernovaBomb.currentHeading + 90;
+                    // Menembakkan teleport untuk kabur jika syarat memenuhi
+                    fireTeleport();
+                if(bot.getSize() > 5) {
+                    // Kabur menggunakan afterburner apabila syarat memenuhi
+                    playerAction.action = PlayerActions.StartAfterBurner;
+                    messageBot += " Action:AfterBurner Run from Supernova";
                     }
                 }
-                else {
-                    rotateNearGas(playerAction.heading);
-                }
-            
+            }
+            else {
+                rotateNearGas(playerAction.heading);
+            }
 
             escapeTeleport(safeRadiusPlayer);
             break;
