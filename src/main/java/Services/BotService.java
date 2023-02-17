@@ -366,9 +366,14 @@ public class BotService {
     */
         int state = 0;
         double Distance = getDistanceBetween(bot, NearestPlayer) - bot.getSize() - NearestPlayer.getSize();
-        
+        int tick = 0;
 
-        if((bot.getSize() > NearestPlayer.getSize() && Distance < attackRadius) || bot.getSize() > 500){
+        if(gameState.getWorld().getCurrentTick() != null){
+            tick = gameState.getWorld().getCurrentTick();
+        }
+
+
+        if((bot.getSize() > NearestPlayer.getSize() && Distance < attackRadius && tick > 70) || bot.getSize() > 500){
             
             state = 1;
             
@@ -379,11 +384,6 @@ public class BotService {
             }
         }
 
-        if(gameState.getWorld().getCurrentTick() != null){
-            if(gameState.getWorld().getCurrentTick() < 100){
-                state = 0;
-            }
-        }
 
         return state;
     }
