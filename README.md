@@ -88,7 +88,7 @@ ini meliputi menembakkan dan meledakkan *supernova*, mengaktifkan *teleport* yan
                             │
                             │
                             ├───Models
-                            |       ├───GameObject.java
+                            │       ├───GameObject.java
                             │       │
                             │       ├───GameState.java
                             │       │
