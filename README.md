@@ -59,53 +59,53 @@ ini meliputi menembakkan dan meledakkan *supernova*, mengaktifkan *teleport* yan
 │       
 │
 ├───target
-│   ├───classes
-│   │ 
-│   ├───libs
-│   │ 
-│   ├───maven-archiver
-│   │ 
-│   ├───maven-status
-│   │ 
-│   └───JavaBot.jar
+│       ├───classes
+│       │ 
+│       ├───libs
+│       │ 
+│       ├───maven-archiver
+│       │ 
+│       ├───maven-status
+│       │ 
+│       └───JavaBot.jar
 |
 |
 └───src
-    └───JavaBot
-        │   Dockerfile
-        │   pom.xml
-        │
-        ├───.github
-        │       .gitkeep
-        │
-        └───src
-            └───main
-                └───java
-                    ├───Enums
-                    |   ├───ObjectTypes.java
-                    |   |
-                    |   └───PlayerActions.java
-                    |
-                    |
-                    ├───Models
-                    |   ├───GameObject.java
-                    |   |
-                    |   ├───GameState.java
-                    |   |
-                    |   ├───GameStateDto.java
-                    |   |
-                    |   ├───PlayerAction.java
-                    |   |
-                    |   ├───Position.java
-                    |   |
-                    |   └───World.java
-                    |
-                    |
-                    ├───Services
-                    |   └───BotService.java
-                    |
-                    |   
-                    └───Main.java
+        └───JavaBot
+            │   Dockerfile
+            │   pom.xml
+            │
+            ├───.github
+            │       .gitkeep
+            │
+            └───src
+                    └───main
+                        └───java
+                               ├───Enums
+                        |      ├───ObjectTypes.java
+                        |      |
+                        |      └───PlayerActions.java
+                        |
+                        |
+                        ├───Models
+                        |       ├───GameObject.java
+                        |       |
+                        |       ├───GameState.java
+                        |       |
+                        |       ├───GameStateDto.java
+                        |       |
+                        |       ├───PlayerAction.java
+                        |       |
+                        |       ├───Position.java
+                        |       |
+                        |       └───World.java
+                        |
+                        |
+                        ├───Services
+                        |       └───BotService.java
+                        |
+                        |   
+                        └───Main.java
 ```
 
 ## Requirement Program
