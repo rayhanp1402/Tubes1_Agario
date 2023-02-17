@@ -122,6 +122,46 @@ ini meliputi menembakkan dan meledakkan *supernova*, mengaktifkan *teleport* yan
 * Bila terdapat file `.jar` baru pada folder `target`, maka program berhasil dikompilasi.
 
 ## Cara Menjalankan Program
+Untuk Windows, Anda dapat menggunakan cara berikut
+### Pada Terminal secara Manual
+* Masuk ke dalam folder `starter-pack`.
+* Jalankan perintah `cd .\runner-publish\`, kemudian `dotnet GameRunner.dll`.
+* Buat terminal baru dalam folder `starter-pack`.
+* Jalankan perintah `cd .\engine-publish\`, kemudian `dotnet Engine.dll`.
+* Buat terminal baru dalam folder `starter-pack`.
+* Jalankan perintah `cd .\logger-publish\`, kemudian `dotnet Logger.dll`.
+* Panggil sebanyak Bot yang diperbolehkan dalam permainan (dapat diubah dalam file `appsettings.json` pada folder `engine-publish` dan `folder-publish`).
+Sebagai contoh, jalankan perintah `cd .\reference-bot-publish\`, kemudian `dotnet ReferenceBot.dll` untuk Bot Referensi dan
+`java -jar .\Tubes1_Agario\src\JavaBot\target\JavaBot.jar` untuk Bot Agario (Bot yang kami implementasikan).
+
+### Dengan Batch File
+```bash
+@echo off
+:: Game Runner
+cd ./runner-publish/
+start "" dotnet GameRunner.dll
+:: Game Engine
+cd ../engine-publish/
+timeout /t 1
+start "" dotnet Engine.dll
+:: Game Logger
+cd ../logger-publish/
+timeout /t 1
+start "" dotnet Logger.dll
+:: Bots
+cd ../reference-bot-publish/
+timeout /t 3
+start "" dotnet ReferenceBot.dll
+timeout /t 3
+start "" dotnet ReferenceBot.dll
+timeout /t 3
+start "" dotnet ReferenceBot.dll
+timeout /t 3
+start "" dotnet ReferenceBot.dll
+cd ../
+pause
+```
+Bagian :: Bots dapat dimodifikasi dari menjalankan Reference Bot Agario.
 
 ## Link Demo
 
